@@ -64,13 +64,13 @@ Phase 2: 웹 서버 및 프론트엔드 (Part 4, 5, 6)
 
 #### 1.3 거래량/수급 분석 (`analyze_volume.py`)
 
-- [ ] `pipeline/02_analyze_volume.py` 구현
-  - [ ] OBV (On-Balance Volume) 계산
-  - [ ] A/D Line (Accumulation/Distribution) 계산
-  - [ ] MFI (Money Flow Index) 계산
-  - [ ] Volume Surge 감지
-  - [ ] Supply/Demand Score 계산 (0-100)
-  - [ ] `us_volume_analysis.csv` 저장
+- [x] `pipeline/02_analyze_volume.py` 구현
+  - [x] OBV (On-Balance Volume) 계산
+  - [x] A/D Line (Accumulation/Distribution) 계산
+  - [x] MFI (Money Flow Index) 계산
+  - [x] Volume Surge 감지
+  - [x] Supply/Demand Score 계산 (0-100)
+  - [x] `us_volume_analysis.csv` 저장
 
 **출력 파일:**
 
