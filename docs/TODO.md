@@ -245,12 +245,12 @@ python pipeline/update_all.py           # 전체 실행
 
 #### 3.3 최종 Top 10 리포트 (`final_report_generator.py`)
 
-- [ ] `pipeline/final_report_generator.py` 구현
-  - [ ] Quant Score와 AI 분석 결합
-  - [ ] Final Score 계산 (Quant 80% + AI 20%)
-  - [ ] Top 10 종목 선정
-  - [ ] `final_top10_report.json` 저장
-  - [ ] `smart_money_current.json` 저장 (대시보드용)
+- [x] `pipeline/final_report_generator.py` 구현
+  - [x] Quant Score와 AI 분석 결합
+  - [x] Final Score 계산 (Quant 80% + AI 20%)
+  - [x] Top 10 종목 선정
+  - [x] `final_top10_report.json` 저장
+  - [x] `smart_money_current.json` 저장 (대시보드용)
 
 **출력 파일:**
 

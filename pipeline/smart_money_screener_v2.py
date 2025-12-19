@@ -406,23 +406,34 @@ class EnhancedSmartMoneyScreener:
                 hist['Close'].iloc[-21]
             ) if len(hist) >= 21 else 0.0
             
-            # 60-day return: Use all available data (period="3mo" may have < 60 days due to holidays)
-            # safe_return already handles zero/NaN checks, so we only need minimum data check
-            stock_return_60d = safe_return(
-                hist['Close'].iloc[-1],
-                hist['Close'].iloc[0]
-            ) if len(hist) >= 20 else 0.0
+            # 60-day return: Require at least 50 trading days for meaningful 60-day calculation
+            # period="3mo" typically has ~63 trading days, but may have fewer due to holidays
+            # Using 50 as threshold ensures we're measuring a meaningful period close to 60 days
+            stock_days_available = len(hist)
+            if stock_days_available >= 50:
+                stock_return_60d = safe_return(
+                    hist['Close'].iloc[-1],
+                    hist['Close'].iloc[0]
+                )
+            else:
+                # Insufficient data for 60-day calculation
+                stock_return_60d = 0.0
             
             spy_return_20d = safe_return(
                 spy_sorted['Close'].iloc[-1],
                 spy_sorted['Close'].iloc[-21]
             ) if len(spy_sorted) >= 21 else 0.0
             
-            # 60-day return: Use all available data (period="3mo" may have < 60 days due to holidays)
-            spy_return_60d = safe_return(
-                spy_sorted['Close'].iloc[-1],
-                spy_sorted['Close'].iloc[0]
-            ) if len(spy_sorted) >= 20 else 0.0
+            # 60-day return: Require at least 50 trading days for meaningful 60-day calculation
+            spy_days_available = len(spy_sorted)
+            if spy_days_available >= 50:
+                spy_return_60d = safe_return(
+                    spy_sorted['Close'].iloc[-1],
+                    spy_sorted['Close'].iloc[0]
+                )
+            else:
+                # Insufficient data for 60-day calculation
+                spy_return_60d = 0.0
             
             rs_20d = stock_return_20d - spy_return_20d
             rs_60d = stock_return_60d - spy_return_60d
