@@ -618,10 +618,23 @@ bash bin/run_server.sh
 
 ### 테스트 및 검증
 
-- [ ] 각 Part 완료 후 수동 테스트
-- [ ] 데이터 파일 생성 확인
-- [ ] API 엔드포인트 동작 확인
-- [ ] 프론트엔드 UI 동작 확인
+- [x] 각 Part 완료 후 수동 테스트
+- [x] 데이터 파일 생성 확인 (`bin/verify_data.py`)
+- [x] API 엔드포인트 동작 확인 (`bin/verify_api.py`)
+- [x] 프론트엔드 UI 동작 확인 (`bin/verify_all.py` - 수동 확인 가이드 포함)
+
+**검증 스크립트:**
+
+```bash
+# 데이터 파일 검증
+python bin/verify_data.py
+
+# API 엔드포인트 검증 (서버 실행 후)
+python bin/verify_api.py
+
+# 전체 검증 (데이터 + API)
+python bin/verify_all.py
+```
 
 ---
 
@@ -645,18 +658,26 @@ bash bin/run_server.sh
 
 ### 주요 출력 파일 체크리스트
 
-- [ ] `us_daily_prices.csv`
-- [ ] `us_volume_analysis.csv`
-- [ ] `us_13f_holdings.csv`
-- [ ] `us_etf_flows.csv`
-- [ ] `smart_money_picks_v2.csv`
-- [ ] `sector_heatmap.json`
-- [ ] `options_flow.json`
-- [ ] `macro_analysis.json`
-- [ ] `ai_summaries.json`
-- [ ] `final_top10_report.json`
-- [ ] `smart_money_current.json`
-- [ ] `weekly_calendar.json`
+- [x] `us_daily_prices.csv` (`pipeline/01_collect_prices.py`)
+- [x] `us_volume_analysis.csv` (`pipeline/02_analyze_volume.py`)
+- [x] `us_13f_holdings.csv` (`pipeline/03_analyze_13f.py`)
+- [x] `us_etf_flows.csv` (`pipeline/04_etf_flows.py`)
+- [x] `smart_money_picks_v2.csv` (`pipeline/smart_money_screener_v2.py`)
+- [x] `sector_heatmap.json` (`pipeline/sector_heatmap.py`)
+- [x] `options_flow.json` (`pipeline/options_flow.py`)
+- [x] `macro_analysis.json` (`pipeline/macro_analyzer.py`)
+- [x] `ai_summaries.json` (`pipeline/ai_summary_generator.py`)
+- [x] `final_top10_report.json` (`pipeline/final_report_generator.py`)
+- [x] `smart_money_current.json` (`pipeline/final_report_generator.py`)
+- [x] `weekly_calendar.json` (`pipeline/economic_calendar.py`)
+
+**추가 출력 파일:**
+
+- [x] `us_stocks_list.csv` (`pipeline/01_collect_prices.py`)
+- [x] `insider_moves.json` (`pipeline/insider_tracker.py`)
+- [x] `portfolio_risk.json` (`pipeline/portfolio_risk.py`)
+- [x] `macro_analysis_en.json` (`pipeline/macro_analyzer.py`)
+- [x] `etf_flow_analysis.json` (`pipeline/04_etf_flows.py`)
 
 ---
 
