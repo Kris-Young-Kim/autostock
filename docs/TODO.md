@@ -123,35 +123,35 @@ python pipeline/update_all.py           # 전체 실행
 
 #### 2.1 6-Factor 종합 스크리닝 (`smart_money_screener_v2.py`)
 
-- [ ] `pipeline/smart_money_screener_v2.py` 구현
-  - [ ] 데이터 로드 (Volume, 13F, ETF 데이터 병합)
-  - [ ] Technical Analysis 함수 구현
-    - [ ] RSI (14-day) 계산
-    - [ ] MACD (12, 26, 9) 계산
-    - [ ] Moving Averages (20, 50, 200) 계산
-    - [ ] Golden/Death Cross 감지
-    - [ ] Technical Score 계산 (0-100)
-  - [ ] Fundamental Analysis 함수 구현
-    - [ ] P/E, Forward P/E, P/B 수집
-    - [ ] Revenue Growth, Earnings Growth 수집
-    - [ ] ROE, Profit Margin 수집
-    - [ ] Fundamental Score 계산 (0-100)
-  - [ ] Analyst Ratings 함수 구현
-    - [ ] Target Price, Upside Potential 계산
-    - [ ] Recommendation Key 파싱
-    - [ ] Analyst Score 계산 (0-100)
-  - [ ] Relative Strength 함수 구현
-    - [ ] SPY 대비 20일, 60일 수익률 비교
-    - [ ] RS Score 계산 (0-100)
-  - [ ] Composite Score 계산 (가중 평균)
-    - [ ] Supply/Demand: 25%
-    - [ ] Institutional: 20%
-    - [ ] Technical: 20%
-    - [ ] Fundamental: 15%
-    - [ ] Analyst: 10%
-    - [ ] Relative Strength: 10%
-  - [ ] Grade 할당 (S, A, B, C, D, F)
-  - [ ] `smart_money_picks_v2.csv` 저장
+- [x] `pipeline/smart_money_screener_v2.py` 구현
+  - [x] 데이터 로드 (Volume, 13F, ETF 데이터 병합)
+  - [x] Technical Analysis 함수 구현
+    - [x] RSI (14-day) 계산
+    - [x] MACD (12, 26, 9) 계산
+    - [x] Moving Averages (20, 50, 200) 계산
+    - [x] Golden/Death Cross 감지
+    - [x] Technical Score 계산 (0-100)
+  - [x] Fundamental Analysis 함수 구현
+    - [x] P/E, Forward P/E, P/B 수집
+    - [x] Revenue Growth, Earnings Growth 수집
+    - [x] ROE, Profit Margin 수집
+    - [x] Fundamental Score 계산 (0-100)
+  - [x] Analyst Ratings 함수 구현
+    - [x] Target Price, Upside Potential 계산
+    - [x] Recommendation Key 파싱
+    - [x] Analyst Score 계산 (0-100)
+  - [x] Relative Strength 함수 구현
+    - [x] SPY 대비 20일, 60일 수익률 비교
+    - [x] RS Score 계산 (0-100)
+  - [x] Composite Score 계산 (가중 평균)
+    - [x] Supply/Demand: 25%
+    - [x] Institutional: 20%
+    - [x] Technical: 20%
+    - [x] Fundamental: 15%
+    - [x] Analyst: 10%
+    - [x] Relative Strength: 10%
+  - [x] Grade 할당 (S, A, B, C, D, F)
+  - [x] `smart_money_picks_v2.csv` 저장
 
 **출력 파일:**
 
