@@ -301,13 +301,13 @@ python pipeline/update_all.py  # 전체 파이프라인 실행
 
 #### 4.2 핵심 유틸리티 함수 구현
 
-- [ ] 섹터 매핑 함수 (`get_sector`)
-  - [ ] SECTOR_MAP 정의 (주요 종목)
-  - [ ] yfinance를 통한 동적 섹터 조회
-  - [ ] 섹터 캐시 파일 (`sector_cache.json`) 구현
-- [ ] 기술적 지표 계산 함수
-  - [ ] `calculate_rsi()` 구현
-  - [ ] `analyze_trend()` 구현
+- [x] 섹터 매핑 함수 (`get_sector`)
+  - [x] SECTOR_MAP 정의 (주요 종목)
+  - [x] yfinance를 통한 동적 섹터 조회
+  - [x] 섹터 캐시 파일 (`sector_cache.json`) 구현
+- [x] 기술적 지표 계산 함수
+  - [x] `calculate_rsi()` 구현
+  - [x] `analyze_trend()` 구현
 
 #### 4.3 US Market API 엔드포인트 구현
 
