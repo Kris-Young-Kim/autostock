@@ -91,11 +91,11 @@ Phase 2: 웹 서버 및 프론트엔드 (Part 4, 5, 6)
 
 #### 1.5 ETF 자금 흐름 분석 (`analyze_etf_flows.py`)
 
-- [ ] `pipeline/04_etf_flows.py` 구현
-  - [ ] 주요 ETF 24개 추적 (SPY, QQQ, IWM, GLD, USO 등)
-  - [ ] Flow Score 계산 (OBV, Volume Ratio 기반)
-  - [ ] `us_etf_flows.csv` 저장
-  - [ ] (선택) Gemini AI 분석 통합 → `etf_flow_analysis.json`
+- [x] `pipeline/04_etf_flows.py` 구현
+  - [x] 주요 ETF 24개 추적 (SPY, QQQ, IWM, GLD, USO 등)
+  - [x] Flow Score 계산 (OBV, Volume Ratio 기반)
+  - [x] `us_etf_flows.csv` 저장
+  - [x] (선택) Gemini AI 분석 통합 → `etf_flow_analysis.json`
 
 **출력 파일:**
 
