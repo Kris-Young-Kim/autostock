@@ -292,11 +292,12 @@ python pipeline/update_all.py  # 전체 파이프라인 실행
 
 #### 4.1 Flask 애플리케이션 구조 설정
 
-- [ ] `web/` 디렉토리 구조 생성
-  - [ ] `web/app.py` - Flask 메인 애플리케이션
-  - [ ] `web/routes.py` - API 엔드포인트 정의 (선택)
-  - [ ] `web/templates/` - HTML 템플릿
-  - [ ] `web/static/` - CSS, JS, Assets
+- [x] `web/` 디렉토리 구조 생성
+  - [x] `web/app.py` - Flask 메인 애플리케이션
+  - [x] `web/routes.py` - API 엔드포인트 정의
+  - [x] `web/__init__.py` - 패키지 초기화
+  - [x] `web/templates/` - HTML 템플릿 (이미 생성됨)
+  - [x] `web/static/` - CSS, JS, Assets (이미 생성됨)
 
 #### 4.2 핵심 유틸리티 함수 구현
 
