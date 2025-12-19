@@ -62,6 +62,12 @@ window.i18n = {
     loading: "로딩 중...",
     error: "오류",
     noData: "데이터 없음",
+    networkError: "네트워크 연결 오류",
+    apiError: "서버 오류가 발생했습니다",
+    timeoutError: "요청 시간이 초과되었습니다",
+    unknownError: "알 수 없는 오류가 발생했습니다",
+    retry: "다시 시도",
+    close: "닫기",
   },
   en: {
     dashboard: "Dashboard",
@@ -86,6 +92,12 @@ window.i18n = {
     loading: "Loading...",
     error: "Error",
     noData: "No Data",
+    networkError: "Network connection error",
+    apiError: "Server error occurred",
+    timeoutError: "Request timeout",
+    unknownError: "Unknown error occurred",
+    retry: "Retry",
+    close: "Close",
   },
 };
 
@@ -163,25 +175,203 @@ window.logError = function (context, error) {
 };
 
 /**
- * Fetch API with error handling
+ * Show error message to user
+ * @param {string} message - Error message
+ * @param {string} type - Error type ('error', 'warning', 'info')
+ * @param {number} duration - Display duration in ms (0 = permanent until closed)
  */
-window.fetchAPI = async function (endpoint, options = {}) {
+window.showErrorMessage = function (message, type = "error", duration = 5000) {
+  // Remove existing error toast if any
+  const existingToast = document.getElementById("error-toast");
+  if (existingToast) {
+    existingToast.remove();
+  }
+
+  // Create toast element
+  const toast = document.createElement("div");
+  toast.id = "error-toast";
+  toast.className = `fixed top-4 right-4 z-50 max-w-md p-4 rounded-lg shadow-lg border ${
+    type === "error"
+      ? "bg-red-900 border-red-700 text-red-100"
+      : type === "warning"
+      ? "bg-yellow-900 border-yellow-700 text-yellow-100"
+      : "bg-blue-900 border-blue-700 text-blue-100"
+  }`;
+
+  toast.innerHTML = `
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0">
+        <i class="fas ${
+          type === "error"
+            ? "fa-exclamation-circle"
+            : type === "warning"
+            ? "fa-exclamation-triangle"
+            : "fa-info-circle"
+        } text-xl"></i>
+      </div>
+      <div class="flex-1">
+        <p class="text-sm font-medium">${message}</p>
+      </div>
+      <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 text-gray-400 hover:text-white">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(toast);
+
+  // Auto-remove after duration
+  if (duration > 0) {
+    setTimeout(() => {
+      if (toast.parentElement) {
+        toast.remove();
+      }
+    }, duration);
+  }
+};
+
+/**
+ * Get user-friendly error message
+ * @param {Error} error - Error object
+ * @param {string} context - Error context
+ * @returns {string} User-friendly error message
+ */
+window.getErrorMessage = function (error, context = "") {
+  const lang = window.currentLang || "ko";
+  const i18n = window.i18n[lang] || window.i18n.ko;
+
+  // Network errors
+  if (
+    error.message.includes("Failed to fetch") ||
+    error.message.includes("NetworkError") ||
+    error.message.includes("network")
+  ) {
+    return i18n.networkError || "네트워크 연결 오류";
+  }
+
+  // Timeout errors
+  if (
+    error.message.includes("timeout") ||
+    error.message.includes("Timeout")
+  ) {
+    return i18n.timeoutError || "요청 시간이 초과되었습니다";
+  }
+
+  // HTTP errors
+  if (error.message.includes("HTTP error")) {
+    const statusMatch = error.message.match(/status: (\d+)/);
+    if (statusMatch) {
+      const status = parseInt(statusMatch[1]);
+      if (status === 404) {
+        return lang === "ko" ? "요청한 데이터를 찾을 수 없습니다" : "Requested data not found";
+      } else if (status === 500) {
+        return i18n.apiError || "서버 오류가 발생했습니다";
+      } else if (status >= 400 && status < 500) {
+        return lang === "ko" ? "잘못된 요청입니다" : "Bad request";
+      } else if (status >= 500) {
+        return i18n.apiError || "서버 오류가 발생했습니다";
+      }
+    }
+    return i18n.apiError || "서버 오류가 발생했습니다";
+  }
+
+  // API response errors
+  if (error.error) {
+    return error.error;
+  }
+
+  // Unknown errors
+  return i18n.unknownError || "알 수 없는 오류가 발생했습니다";
+};
+
+/**
+ * Fetch API with error handling
+ * @param {string} endpoint - API endpoint
+ * @param {Object} options - Fetch options
+ * @param {boolean} showErrorToast - Whether to show error toast to user
+ * @returns {Promise<Object>} API response
+ */
+window.fetchAPI = async function (endpoint, options = {}, showErrorToast = false) {
   try {
+    // Add timeout to fetch request (30 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
     const response = await fetch(`${window.API_BASE}${endpoint}`, {
       ...options,
+      signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
         ...options.headers,
       },
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // Try to parse error message from response
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        }
+      } catch (e) {
+        // Response is not JSON, use status text
+        errorMessage = response.statusText || errorMessage;
+      }
+
+      const error = new Error(errorMessage);
+      error.status = response.status;
+      error.response = response;
+
+      window.logError(`API: ${endpoint}`, error);
+
+      if (showErrorToast) {
+        const userMessage = getErrorMessage(error, endpoint);
+        showErrorMessage(userMessage, "error");
+      }
+
+      throw error;
     }
 
     return await response.json();
   } catch (error) {
+    // Handle abort (timeout)
+    if (error.name === "AbortError") {
+      const timeoutError = new Error("Request timeout");
+      window.logError(`API: ${endpoint}`, timeoutError);
+      if (showErrorToast) {
+        const userMessage = getErrorMessage(timeoutError, endpoint);
+        showErrorMessage(userMessage, "error");
+      }
+      throw timeoutError;
+    }
+
+    // Handle network errors
+    if (
+      error.message.includes("Failed to fetch") ||
+      error.message.includes("NetworkError")
+    ) {
+      window.logError(`API: ${endpoint}`, error);
+      if (showErrorToast) {
+        const userMessage = getErrorMessage(error, endpoint);
+        showErrorMessage(userMessage, "error");
+      }
+      throw error;
+    }
+
+    // Re-throw if already handled
+    if (error.status) {
+      throw error;
+    }
+
+    // Log and re-throw other errors
     window.logError(`API: ${endpoint}`, error);
+    if (showErrorToast) {
+      const userMessage = getErrorMessage(error, endpoint);
+      showErrorMessage(userMessage, "error");
+    }
     throw error;
   }
 };
@@ -213,6 +403,8 @@ window.initApp = function () {
   if (typeof updateUSMarketDashboard === "function") {
     updateUSMarketDashboard().catch((error) => {
       logError("Dashboard initialization", error);
+      const userMessage = getErrorMessage(error, "Dashboard initialization");
+      showErrorMessage(userMessage, "error");
     });
   }
 
@@ -220,6 +412,7 @@ window.initApp = function () {
   if (typeof reloadMacroAnalysis === "function") {
     reloadMacroAnalysis().catch((error) => {
       logError("Macro analysis initialization", error);
+      // Don't show toast for macro analysis errors on init (it's not critical)
     });
   }
 
@@ -537,6 +730,8 @@ window.updateUSMarketDashboard = async function () {
 
   try {
     // Parallel data fetching using Promise.all
+    // Note: Individual errors are caught and logged, but don't show toast for each
+    // Only show toast if all requests fail
     const [portfolioData, smartMoneyData, etfFlowsData, historyDatesData] =
       await Promise.all([
         fetchAPI("/api/us/portfolio").catch((err) => {
@@ -556,6 +751,21 @@ window.updateUSMarketDashboard = async function () {
           return null;
         }),
       ]);
+
+    // Show error if all requests failed
+    if (
+      !portfolioData &&
+      !smartMoneyData &&
+      !etfFlowsData &&
+      !historyDatesData
+    ) {
+      const lang = window.currentLang || "ko";
+      const i18n = window.i18n[lang] || window.i18n.ko;
+      showErrorMessage(
+        i18n.apiError || "데이터를 불러올 수 없습니다",
+        "error"
+      );
+    }
 
     // Render each section
     if (portfolioData && typeof renderUSMarketIndices === "function") {
@@ -585,6 +795,8 @@ window.updateUSMarketDashboard = async function () {
     };
   } catch (error) {
     logError("Dashboard update", error);
+    const userMessage = getErrorMessage(error, "Dashboard update");
+    showErrorMessage(userMessage, "error");
     throw error;
   }
 };
@@ -878,9 +1090,11 @@ window.loadUSStockChart = async function (pick, idx, period) {
     console.log(`✅ Chart loaded for ${ticker} (${usePeriod})`);
   } catch (error) {
     logError("Chart loading", error);
+    const userMessage = getErrorMessage(error, "Chart loading");
     if (chartContainer) {
-      chartContainer.innerHTML = `<div class="flex items-center justify-center h-full text-red-500">Error loading chart: ${error.message}</div>`;
+      chartContainer.innerHTML = `<div class="flex items-center justify-center h-full text-red-500">${userMessage}</div>`;
     }
+    showErrorMessage(userMessage, "error");
   }
 };
 
@@ -923,7 +1137,11 @@ window.loadUSAISummary = async function (ticker) {
     }
   } catch (error) {
     logError("AI Summary loading", error);
-    summaryContainer.innerHTML = `<div class="text-sm text-red-500">Error loading summary</div>`;
+    const userMessage = getErrorMessage(error, "AI Summary loading");
+    const lang = window.currentLang || "ko";
+    const i18n = window.i18n[lang] || window.i18n.ko;
+    summaryContainer.innerHTML = `<div class="text-sm text-red-500">${userMessage}</div>`;
+    // Don't show toast for AI summary errors (not critical)
   }
 };
 
