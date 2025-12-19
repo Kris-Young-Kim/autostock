@@ -159,12 +159,12 @@ python pipeline/update_all.py           # 전체 실행
 
 #### 2.2 섹터 히트맵 (`sector_heatmap.py`)
 
-- [ ] `pipeline/sector_heatmap.py` 구현
-  - [ ] 11개 S&P 섹터 ETF 추적
-    - [ ] XLK (Technology), XLF (Financials), XLV (Healthcare) 등
-  - [ ] 섹터별 퍼포먼스 계산
-  - [ ] Treemap 데이터 구조 생성
-  - [ ] `sector_heatmap.json` 저장
+- [x] `pipeline/sector_heatmap.py` 구현
+  - [x] 11개 S&P 섹터 ETF 추적
+    - [x] XLK (Technology), XLF (Financials), XLV (Healthcare) 등
+  - [x] 섹터별 퍼포먼스 계산
+  - [x] Treemap 데이터 구조 생성
+  - [x] `sector_heatmap.json` 저장
 
 **출력 파일:**
 
