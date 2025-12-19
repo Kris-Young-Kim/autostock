@@ -259,10 +259,10 @@ python pipeline/update_all.py           # 전체 실행
 
 #### 3.4 경제 캘린더 (`economic_calendar.py`)
 
-- [ ] `pipeline/economic_calendar.py` 구현
-  - [ ] 주요 경제 이벤트 수집
-  - [ ] AI 영향도 분석 (High Impact 이벤트)
-  - [ ] `weekly_calendar.json` 저장
+- [x] `pipeline/economic_calendar.py` 구현
+  - [x] 주요 경제 이벤트 수집
+  - [x] AI 영향도 분석 (High Impact 이벤트)
+  - [x] `weekly_calendar.json` 저장
 
 **출력 파일:**
 

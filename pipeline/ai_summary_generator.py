@@ -104,7 +104,32 @@ class GeminiGenerator:
             prompt = self._build_prompt(ticker, data, news, lang)
             
             response = model.generate_content(prompt)
-            summary = response.text
+            
+            # Check if content was blocked by safety filters
+            if hasattr(response, 'is_blocked') and response.is_blocked:
+                logger.warning(f"Content blocked by safety filters for {ticker}")
+                return "Content blocked by safety filters"
+            
+            # Check if response has text attribute
+            if not hasattr(response, 'text') or not response.text:
+                # Try to get text from candidates
+                if hasattr(response, 'candidates') and response.candidates:
+                    candidate = response.candidates[0]
+                    if hasattr(candidate, 'content') and hasattr(candidate.content, 'parts'):
+                        text_parts = [part.text for part in candidate.content.parts if hasattr(part, 'text')]
+                        if text_parts:
+                            summary = ''.join(text_parts)
+                        else:
+                            logger.warning(f"No text content in response for {ticker}")
+                            return "No content generated"
+                    else:
+                        logger.warning(f"Unexpected response structure for {ticker}")
+                        return "Invalid response structure"
+                else:
+                    logger.warning(f"No candidates in response for {ticker}")
+                    return "No response generated"
+            else:
+                summary = response.text
             
             return summary.strip()
             
