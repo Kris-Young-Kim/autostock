@@ -70,7 +70,25 @@ class FinalReportGenerator:
         Returns:
             Tuple of (ai_score, recommendation)
         """
-        if not summary or summary == "API Key Missing" or summary == "Analysis Failed":
+        # Check for error messages (including partial matches)
+        error_messages = [
+            "API Key Missing",
+            "Analysis Failed",
+            "Content blocked",
+            "No content generated",
+            "Invalid response",
+            "No response generated",
+            "Package not installed",
+            "Error:",
+            "Failed:"
+        ]
+        
+        if not summary:
+            return 0, "Hold"
+        
+        # Check if summary contains any error message
+        summary_lower = summary.lower()
+        if any(error.lower() in summary_lower for error in error_messages):
             return 0, "Hold"
         
         summary_lower = summary.lower()
@@ -154,8 +172,12 @@ class FinalReportGenerator:
             quant_score = row.get('composite_score', 0)
             
             # Calculate final score (Quant 80% + AI 20%)
-            # AI score is added as bonus (0-25), so we scale it to 0-20 for 20% weight
-            ai_weighted = (ai_score / 25) * 20 if ai_score > 0 else (ai_score / 20) * 20
+            # AI score range: -20 to +25, scale symmetrically to -20 to +20 for consistent 20% weight
+            # Use symmetric scaling: normalize by max absolute value (25) then scale to [-20, 20]
+            # This ensures equal weight for positive and negative scores
+            max_abs_score = 25  # Maximum absolute value in AI score range
+            ai_weighted = (ai_score / max_abs_score) * 20
+            
             final_score = quant_score * 0.8 + ai_weighted
             
             # Ensure final score is within 0-100 range

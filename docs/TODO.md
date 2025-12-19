@@ -270,11 +270,13 @@ python pipeline/update_all.py           # 전체 실행
 
 #### 3.5 통합 업데이트 스크립트 업데이트
 
-- [ ] `pipeline/update_all.py`에 Part 3 스크립트 추가
-  - [ ] `macro_analyzer.py` 실행
-  - [ ] `ai_summary_generator.py` 실행
-  - [ ] `final_report_generator.py` 실행
-  - [ ] `economic_calendar.py` 실행
+- [x] `pipeline/update_all.py`에 Part 3 스크립트 추가
+  - [x] `macro_analyzer.py` 실행
+  - [x] `ai_summary_generator.py` 실행
+  - [x] `final_report_generator.py` 실행
+  - [x] `economic_calendar.py` 실행
+  - [x] Part 2 스크립트도 추가
+  - [x] `--part` 옵션 추가 (특정 파트만 실행)
 
 **검증:**
 

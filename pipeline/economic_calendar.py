@@ -120,18 +120,26 @@ class EconomicCalendar:
             logger.debug(f"Error fetching Yahoo Finance calendar: {e}")
         
         # Add manual major events (fallback and important events)
-        for event_template in self.major_events:
-            # For now, add events for the next week
-            # In production, you would calculate actual dates based on typical_date patterns
-            event_date = today + timedelta(days=len(events) % days_ahead)
-            if event_date <= end_date:
-                events.append({
-                    'date': event_date.strftime('%Y-%m-%d'),
-                    'event': event_template['event'],
-                    'impact': event_template['impact'],
-                    'description': event_template['description'],
-                    'source': 'Manual'
-                })
+        # Distribute events evenly across the time period
+        num_manual_events = len(self.major_events)
+        if num_manual_events > 0 and days_ahead > 0:
+            # Calculate spacing between events
+            spacing = max(1, days_ahead // num_manual_events)
+            
+            for idx, event_template in enumerate(self.major_events):
+                # Distribute events evenly: first event on day 1, second on day 1+spacing, etc.
+                event_day = min(idx * spacing + 1, days_ahead)
+                event_date = today + timedelta(days=event_day)
+                
+                if event_date <= end_date:
+                    events.append({
+                        'date': event_date.strftime('%Y-%m-%d'),
+                        'event': event_template['event'],
+                        'impact': event_template['impact'],
+                        'description': event_template['description'],
+                        'source': 'Manual',
+                        'note': 'Estimated date - verify actual schedule'
+                    })
         
         # Remove duplicates
         seen_events = set()

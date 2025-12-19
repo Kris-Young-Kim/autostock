@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Unified Pipeline Execution Script
-Runs all Part 1 data collection and analysis scripts sequentially
+Runs all data collection, analysis, and AI scripts sequentially
 """
 
 import sys
@@ -26,10 +26,33 @@ PART1_SCRIPTS = [
     ("04_etf_flows.py", "ETF 자금 흐름 분석", 300),
 ]
 
+# Part 2 scripts (Analysis & Screening)
+PART2_SCRIPTS = [
+    ("smart_money_screener_v2.py", "6-Factor 종합 스크리닝", 900),
+    ("sector_heatmap.py", "섹터 히트맵", 300),
+    ("options_flow.py", "옵션 플로우 분석", 300),
+    ("insider_tracker.py", "인사이더 추적", 600),
+    ("portfolio_risk.py", "포트폴리오 리스크 분석", 300),
+]
+
+# Part 3 scripts (AI Analysis)
+PART3_SCRIPTS = [
+    ("macro_analyzer.py", "매크로 경제 분석", 600),
+    ("ai_summary_generator.py", "개별 종목 AI 요약", 1800),
+    ("final_report_generator.py", "최종 Top 10 리포트", 60),
+    ("economic_calendar.py", "경제 캘린더", 300),
+]
+
 # Scripts that include AI analysis (skipped in --quick mode)
 AI_SCRIPTS = [
     "04_etf_flows.py",  # Has optional Gemini AI analysis
+    "macro_analyzer.py",
+    "ai_summary_generator.py",
+    "economic_calendar.py",
 ]
+
+# All scripts combined
+ALL_SCRIPTS = PART1_SCRIPTS + PART2_SCRIPTS + PART3_SCRIPTS
 
 
 def run_script(script_name: str, description: str, timeout: int, skip_ai: bool = False) -> bool:
@@ -88,7 +111,7 @@ def run_script(script_name: str, description: str, timeout: int, skip_ai: bool =
 def main():
     """Main execution"""
     parser = argparse.ArgumentParser(
-        description='Run all Part 1 data collection and analysis scripts'
+        description='Run all pipeline scripts (Part 1, 2, 3)'
     )
     parser.add_argument(
         '--quick',
@@ -100,25 +123,42 @@ def main():
         type=str,
         help='Run only a specific script (e.g., 01_collect_prices.py)'
     )
+    parser.add_argument(
+        '--part',
+        type=int,
+        choices=[1, 2, 3],
+        help='Run only a specific part (1: Data Collection, 2: Analysis, 3: AI)'
+    )
     args = parser.parse_args()
     
     logger.info("=" * 60)
-    logger.info("🚀 Starting Part 1 Pipeline Execution")
+    logger.info("🚀 Starting Full Pipeline Execution")
     if args.quick:
         logger.info("⚡ Quick mode: AI analysis will be skipped")
+    if args.part:
+        logger.info(f"📦 Running Part {args.part} only")
     logger.info("=" * 60)
     
     overall_start = time.time()
     success_count = 0
     failed_scripts = []
     
+    # Determine which scripts to run
+    if args.part == 1:
+        scripts_to_run = PART1_SCRIPTS
+    elif args.part == 2:
+        scripts_to_run = PART2_SCRIPTS
+    elif args.part == 3:
+        scripts_to_run = PART3_SCRIPTS
+    else:
+        scripts_to_run = ALL_SCRIPTS
+    
     # Filter scripts if --script is specified
-    scripts_to_run = PART1_SCRIPTS
     if args.script:
-        scripts_to_run = [s for s in PART1_SCRIPTS if s[0] == args.script]
+        scripts_to_run = [s for s in scripts_to_run if s[0] == args.script]
         if not scripts_to_run:
             logger.error(f"❌ Script not found: {args.script}")
-            logger.info(f"Available scripts: {[s[0] for s in PART1_SCRIPTS]}")
+            logger.info(f"Available scripts: {[s[0] for s in ALL_SCRIPTS]}")
             return 1
     
     # Run each script
