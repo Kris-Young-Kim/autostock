@@ -541,3 +541,101 @@ def register_routes(app: Flask, get_sector_func, calculate_rsi_func, analyze_tre
         except Exception as e:
             logger.error(f"Error in /api/us/history/{date}: {e}")
             return jsonify({'error': str(e)}), 500
+
+    @app.route('/api/realtime-prices', methods=['POST'])
+    def get_realtime_prices():
+        """Get real-time prices for batch ticker list"""
+        try:
+            # Get ticker list from request
+            data = request.get_json()
+            
+            if not data or 'tickers' not in data:
+                return jsonify({'error': 'Missing tickers array in request body'}), 400
+            
+            tickers = data['tickers']
+            
+            if not isinstance(tickers, list):
+                return jsonify({'error': 'tickers must be an array'}), 400
+            
+            if len(tickers) == 0:
+                return jsonify({'error': 'tickers array cannot be empty'}), 400
+            
+            # Limit batch size to avoid rate limiting
+            max_tickers = 50
+            if len(tickers) > max_tickers:
+                tickers = tickers[:max_tickers]
+                logger.warning(f"Ticker list truncated to {max_tickers} items")
+            
+            results = []
+            errors = []
+            
+            # Fetch data for each ticker
+            for ticker in tickers:
+                try:
+                    stock = yf.Ticker(ticker)
+                    
+                    # Get current info
+                    info = stock.info
+                    current_price = info.get('currentPrice', 0) or info.get('regularMarketPrice', 0) or info.get('previousClose', 0) or 0
+                    
+                    # Get recent OHLC data (last 5 days)
+                    hist = stock.history(period='5d')
+                    
+                    if hist.empty:
+                        # Fallback: use info data
+                        results.append({
+                            'ticker': ticker,
+                            'price': round(float(current_price), 2),
+                            'change': 0,
+                            'change_percent': 0,
+                            'volume': 0,
+                            'open': round(float(current_price), 2),
+                            'high': round(float(current_price), 2),
+                            'low': round(float(current_price), 2),
+                            'close': round(float(current_price), 2),
+                            'previous_close': round(float(info.get('previousClose', current_price)), 2),
+                            'timestamp': datetime.now().isoformat()
+                        })
+                        continue
+                    
+                    # Get latest OHLC
+                    latest = hist.iloc[-1]
+                    prev_close = hist['Close'].iloc[-2] if len(hist) >= 2 else latest['Close']
+                    
+                    change = latest['Close'] - prev_close
+                    change_percent = ((latest['Close'] / prev_close) - 1) * 100 if prev_close > 0 else 0
+                    
+                    results.append({
+                        'ticker': ticker,
+                        'price': round(float(latest['Close']), 2),
+                        'change': round(float(change), 2),
+                        'change_percent': round(float(change_percent), 2),
+                        'volume': int(latest['Volume']),
+                        'open': round(float(latest['Open']), 2),
+                        'high': round(float(latest['High']), 2),
+                        'low': round(float(latest['Low']), 2),
+                        'close': round(float(latest['Close']), 2),
+                        'previous_close': round(float(prev_close), 2),
+                        'timestamp': latest.name.strftime('%Y-%m-%d %H:%M:%S') if hasattr(latest.name, 'strftime') else datetime.now().isoformat()
+                    })
+                    
+                except Exception as e:
+                    logger.debug(f"Error fetching data for {ticker}: {e}")
+                    errors.append({
+                        'ticker': ticker,
+                        'error': str(e)
+                    })
+                    continue
+            
+            return jsonify({
+                'success': True,
+                'count': len(results),
+                'prices': results,
+                'errors': errors if errors else None,
+                'requested_count': len(data['tickers']),
+                'returned_count': len(results)
+            })
+            
+        except Exception as e:
+            logger.error(f"Error in /api/realtime-prices: {e}")
+            return jsonify({'error': str(e)}), 500

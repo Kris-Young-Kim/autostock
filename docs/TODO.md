@@ -345,10 +345,10 @@ python pipeline/update_all.py  # 전체 파이프라인 실행
 
 #### 4.4 실시간 가격 업데이트 API
 
-- [ ] `/api/realtime-prices` (POST)
-  - [ ] 배치 티커 리스트 받기
-  - [ ] yfinance를 통한 실시간 가격 조회
-  - [ ] OHLC 데이터 반환
+- [x] `/api/realtime-prices` (POST)
+  - [x] 배치 티커 리스트 받기
+  - [x] yfinance를 통한 실시간 가격 조회
+  - [x] OHLC 데이터 반환
 
 #### 4.5 서버 실행 설정
 
