@@ -486,11 +486,26 @@ bash bin/run_server.sh
 
 #### 6.2 초기화 함수
 
-- [ ] `DOMContentLoaded` 이벤트 리스너
-  - [ ] `updateUSMarketDashboard()` 호출
-  - [ ] 언어/모델 설정 로드
-  - [ ] 이벤트 리스너 등록
-  - [ ] 실시간 업데이트 인터벌 설정
+- [x] `DOMContentLoaded` 이벤트 리스너
+  - [x] `initApp()` 함수 구현
+  - [x] `updateUSMarketDashboard()` 호출 (함수 존재 시)
+  - [x] 언어/모델 설정 로드 (`loadState()`)
+  - [x] UI 상태 업데이트 (`updateUIState()`)
+  - [x] 이벤트 리스너 등록 (`registerEventListeners()`)
+    - [x] SNB 토글
+    - [x] 아코디언
+    - [x] 모달 (열기/닫기)
+    - [x] AI 모델 선택
+    - [x] 탭 전환
+    - [x] 언어 토글
+    - [x] 차트 기간 버튼
+    - [x] 기술적 지표 토글
+    - [x] 윈도우 리사이즈
+  - [x] 실시간 업데이트 인터벌 설정 (`setupUpdateIntervals()`)
+    - [x] 실시간 가격 업데이트 (20초)
+    - [x] 매크로 분석 갱신 (10분)
+    - [x] 시간 표시 업데이트 (1초)
+  - [x] 정리 함수 (`cleanupApp()`) - 페이지 언로드 시
 
 #### 6.3 데이터 페칭 함수
 
