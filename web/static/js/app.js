@@ -505,6 +505,192 @@ window.cleanupApp = function() {
     console.log('🧹 Application cleaned up');
 };
 
+// ============================================
+// Data Fetching Functions
+// ============================================
+
+/**
+ * Update US Market Dashboard
+ * Fetches and renders all major dashboard sections in parallel
+ */
+window.updateUSMarketDashboard = async function() {
+    console.log('📊 Updating US Market Dashboard...');
+    
+    try {
+        // Parallel data fetching using Promise.all
+        const [portfolioData, smartMoneyData, etfFlowsData, historyDatesData] = await Promise.all([
+            fetchAPI('/api/us/portfolio').catch(err => {
+                logError('Portfolio data', err);
+                return null;
+            }),
+            fetchAPI('/api/us/smart-money').catch(err => {
+                logError('Smart Money data', err);
+                return null;
+            }),
+            fetchAPI('/api/us/etf-flows').catch(err => {
+                logError('ETF Flows data', err);
+                return null;
+            }),
+            fetchAPI('/api/us/history-dates').catch(err => {
+                logError('History dates', err);
+                return null;
+            })
+        ]);
+        
+        // Render each section
+        if (portfolioData && typeof renderUSMarketIndices === 'function') {
+            renderUSMarketIndices(portfolioData);
+        }
+        
+        if (smartMoneyData && typeof renderUSSmartMoneyPicks === 'function') {
+            renderUSSmartMoneyPicks(smartMoneyData);
+        }
+        
+        if (etfFlowsData && typeof renderUSETFFlows === 'function') {
+            renderUSETFFlows(etfFlowsData);
+        }
+        
+        // Store history dates for later use
+        if (historyDatesData && historyDatesData.dates) {
+            window.availableHistoryDates = historyDatesData.dates;
+        }
+        
+        console.log('✅ Dashboard updated successfully');
+        
+        return {
+            portfolio: portfolioData,
+            smartMoney: smartMoneyData,
+            etfFlows: etfFlowsData,
+            historyDates: historyDatesData
+        };
+        
+    } catch (error) {
+        logError('Dashboard update', error);
+        throw error;
+    }
+};
+
+/**
+ * Reload Macro Analysis
+ * Refreshes macro analysis section separately (may take longer due to AI)
+ */
+window.reloadMacroAnalysis = async function() {
+    console.log('🌍 Reloading Macro Analysis...');
+    
+    try {
+        const params = new URLSearchParams({
+            lang: window.currentLang,
+            model: window.currentModel
+        });
+        
+        const data = await fetchAPI(`/api/us/macro-analysis?${params.toString()}`);
+        
+        if (data && typeof renderUSMacroAnalysis === 'function') {
+            renderUSMacroAnalysis(data);
+        }
+        
+        console.log('✅ Macro analysis reloaded');
+        
+        return data;
+        
+    } catch (error) {
+        logError('Macro analysis reload', error);
+        throw error;
+    }
+};
+
+/**
+ * Update Real-time Prices
+ * Updates prices for visible stocks in the table and chart
+ */
+window.updateRealtimePrices = async function() {
+    try {
+        // Collect visible tickers from the Smart Money Picks table
+        const tableBody = document.getElementById('picks-table-body');
+        if (!tableBody) {
+            console.debug('No picks table found, skipping real-time update');
+            return;
+        }
+        
+        const rows = tableBody.querySelectorAll('tr[data-ticker]');
+        if (rows.length === 0) {
+            console.debug('No ticker rows found, skipping real-time update');
+            return;
+        }
+        
+        // Extract tickers from table rows
+        const tickers = Array.from(rows).map(row => row.getAttribute('data-ticker'));
+        
+        if (tickers.length === 0) {
+            return;
+        }
+        
+        // Fetch real-time prices
+        const response = await fetchAPI('/api/realtime-prices', {
+            method: 'POST',
+            body: JSON.stringify({ tickers: tickers })
+        });
+        
+        if (!response.success || !response.prices) {
+            console.warn('Real-time price update failed:', response);
+            return;
+        }
+        
+        // Update table cells
+        response.prices.forEach(priceData => {
+            const row = tableBody.querySelector(`tr[data-ticker="${priceData.ticker}"]`);
+            if (!row) return;
+            
+            // Update price cell
+            const priceCell = row.querySelector('.price-cell');
+            if (priceCell) {
+                const oldPrice = parseFloat(priceCell.textContent.replace(/,/g, '')) || 0;
+                const newPrice = priceData.price;
+                
+                priceCell.textContent = formatNumber(newPrice);
+                
+                // Flash effect for price change
+                if (oldPrice > 0 && newPrice !== oldPrice) {
+                    priceCell.classList.add('flash');
+                    setTimeout(() => priceCell.classList.remove('flash'), 500);
+                    
+                    // Add color class
+                    priceCell.classList.remove('text-green', 'text-red', 'text-gray-400');
+                    if (newPrice > oldPrice) {
+                        priceCell.classList.add('text-green');
+                    } else if (newPrice < oldPrice) {
+                        priceCell.classList.add('text-red');
+                    }
+                }
+            }
+            
+            // Update change cell
+            const changeCell = row.querySelector('.change-cell');
+            if (changeCell) {
+                changeCell.textContent = formatPercent(priceData.change_percent);
+                changeCell.classList.remove('text-green', 'text-red', 'text-gray-400');
+                changeCell.classList.add(getColorClass(priceData.change_percent));
+            }
+        });
+        
+        // Update chart if current ticker matches
+        if (window.currentChartPick && window.usStockChart) {
+            const currentTicker = window.currentChartPick.ticker;
+            const priceData = response.prices.find(p => p.ticker === currentTicker);
+            
+            if (priceData && typeof updateChartLastCandle === 'function') {
+                updateChartLastCandle(priceData);
+            }
+        }
+        
+        console.debug(`✅ Updated ${response.prices.length} prices`);
+        
+    } catch (error) {
+        logError('Real-time price update', error);
+        // Don't throw - this is a background update, failures shouldn't break the app
+    }
+};
+
 // Initialize on DOM ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', window.initApp);

@@ -509,16 +509,26 @@ bash bin/run_server.sh
 
 #### 6.3 데이터 페칭 함수
 
-- [ ] `updateUSMarketDashboard()`
-  - [ ] Promise.all로 병렬 데이터 페칭
-  - [ ] 각 섹션 렌더링 함수 호출
-- [ ] `reloadMacroAnalysis()`
-  - [ ] 매크로 분석만 별도 갱신
-  - [ ] 10분 주기 자동 갱신
-- [ ] `updateRealtimePrices()`
-  - [ ] 20초 주기 가격 업데이트
-  - [ ] 테이블 가격 셀 업데이트
-  - [ ] 차트 마지막 캔들 업데이트
+- [x] `updateUSMarketDashboard()`
+  - [x] Promise.all로 병렬 데이터 페칭
+    - [x] `/api/us/portfolio` (Market Indices)
+    - [x] `/api/us/smart-money` (Top Picks)
+    - [x] `/api/us/etf-flows` (ETF Data)
+    - [x] `/api/us/history-dates` (Historical Data)
+  - [x] 각 섹션 렌더링 함수 호출 (함수 존재 시)
+  - [x] 에러 핸들링 (개별 API 실패 시에도 계속 진행)
+- [x] `reloadMacroAnalysis()`
+  - [x] 매크로 분석만 별도 갱신
+  - [x] 언어/모델 파라미터 전달
+  - [x] 10분 주기 자동 갱신 (setupUpdateIntervals에서 설정)
+- [x] `updateRealtimePrices()`
+  - [x] 테이블에서 표시 중인 티커 수집
+  - [x] `/api/realtime-prices` POST 요청
+  - [x] 테이블 가격 셀 업데이트
+  - [x] 가격 변경 시 플래시 애니메이션
+  - [x] 색상 코딩 (상승/하락)
+  - [x] 차트 마지막 캔들 업데이트 준비 (updateChartLastCandle 함수 호출)
+  - [x] 20초 주기 자동 업데이트 (setupUpdateIntervals에서 설정)
 
 #### 6.4 렌더링 함수
 
