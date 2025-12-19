@@ -231,13 +231,13 @@ python pipeline/update_all.py           # 전체 실행
 
 #### 3.2 개별 종목 AI 요약 (`ai_summary_generator.py`)
 
-- [ ] `pipeline/ai_summary_generator.py` 구현
-  - [ ] Smart Money Picks 상위 20개 종목 선택
-  - [ ] 각 종목별 뉴스 수집
-  - [ ] Gemini AI로 투자 요약 생성
-    - [ ] 한국어 요약
-    - [ ] 영어 요약
-  - [ ] `ai_summaries.json` 저장
+- [x] `pipeline/ai_summary_generator.py` 구현
+  - [x] Smart Money Picks 상위 20개 종목 선택
+  - [x] 각 종목별 뉴스 수집
+  - [x] Gemini AI로 투자 요약 생성
+    - [x] 한국어 요약
+    - [x] 영어 요약
+  - [x] `ai_summaries.json` 저장
 
 **출력 파일:**
 
