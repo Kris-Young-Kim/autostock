@@ -1,52 +1,84 @@
 /* Pretendard Font */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
-/* Global Styles */
+/* ============================================
+   Global Styles & Reset
+   ============================================ */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    line-height: 1.5;
 }
 
-/* Custom Color Palette */
+/* ============================================
+   Custom Color Palette (Dark Theme)
+   ============================================ */
 :root {
-    /* Dark Theme Colors */
+    /* Background Colors */
     --bg-primary: #121212;
     --bg-secondary: #1a1a1a;
     --bg-tertiary: #2a2a2a;
+    --bg-hover: #333333;
     
     /* Text Colors */
     --text-primary: #e0e0e0;
     --text-secondary: #888888;
     --text-tertiary: #555555;
+    --text-disabled: #444444;
     
     /* Accent Colors */
     --accent-green: #00E396;
     --accent-red: #FF4560;
     --accent-blue: #008FFB;
     --accent-yellow: #FEB019;
+    --accent-purple: #775DD0;
     
     /* Border Colors */
     --border-primary: #2a2a2a;
     --border-secondary: #333333;
+    --border-hover: #444444;
+    
+    /* Shadow */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.2s ease;
+    --transition-slow: 0.3s ease;
 }
 
-/* Responsive Breakpoints */
+/* ============================================
+   Responsive Breakpoints
+   ============================================ */
 /* 
-  sm: 640px
-  md: 768px
-  lg: 1024px
-  xl: 1280px
-  2xl: 1536px
+  Tailwind CSS Breakpoints:
+  sm:  640px  (small devices)
+  md:  768px  (medium devices)
+  lg:  1024px (large devices)
+  xl:  1280px (extra large devices)
+  2xl: 1536px (2x extra large devices)
 */
 
-/* Scrollbar Styling */
+/* ============================================
+   Scrollbar Styling
+   ============================================ */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -65,7 +97,265 @@ body {
     background: var(--text-tertiary);
 }
 
-/* Utility Classes */
+/* ============================================
+   Navigation Styles
+   ============================================ */
+.nav-link {
+    transition: all var(--transition-base);
+    border-radius: 4px;
+}
+
+.nav-link:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.nav-link.active {
+    background-color: var(--bg-tertiary);
+    border-left: 3px solid var(--accent-blue);
+    font-weight: 600;
+}
+
+.nav-tab {
+    transition: all var(--transition-base);
+    cursor: pointer;
+}
+
+.nav-tab:hover {
+    color: var(--text-primary);
+}
+
+.nav-tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ============================================
+   Accordion Styles
+   ============================================ */
+.accordion-header {
+    cursor: pointer;
+    transition: all var(--transition-base);
+    user-select: none;
+}
+
+.accordion-header:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-slow) ease-out;
+}
+
+.accordion-content.open {
+    max-height: 2000px;
+    transition: max-height var(--transition-slow) ease-in;
+}
+
+/* ============================================
+   Modal Styles
+   ============================================ */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn var(--transition-base);
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp var(--transition-base);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   Stepper Styles
+   ============================================ */
+.stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.stepper-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.stepper-step::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background-color: var(--border-primary);
+    z-index: 0;
+    transition: background-color var(--transition-base);
+}
+
+.stepper-step:last-child::after {
+    display: none;
+}
+
+.stepper-step.completed::after {
+    background-color: var(--accent-green);
+}
+
+.stepper-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--bg-tertiary);
+    border: 2px solid var(--border-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    position: relative;
+    transition: all var(--transition-base);
+}
+
+.stepper-step.completed .stepper-circle {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+    color: white;
+}
+
+.stepper-step.active .stepper-circle {
+    border-color: var(--accent-blue);
+    background-color: var(--accent-blue);
+    color: white;
+}
+
+/* ============================================
+   Button Styles
+   ============================================ */
+button {
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   Input Styles
+   ============================================ */
+input, textarea, select {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    transition: all var(--transition-base);
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(0, 143, 251, 0.1);
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   Table Styles
+   ============================================ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    font-weight: 600;
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+tr:hover td {
+    background-color: var(--bg-tertiary);
+}
+
+/* ============================================
+   Card Styles
+   ============================================ */
+.card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all var(--transition-base);
+}
+
+.card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
 .text-green {
     color: var(--accent-green);
 }
@@ -74,11 +364,56 @@ body {
     color: var(--accent-red);
 }
 
+.text-blue {
+    color: var(--accent-blue);
+}
+
+.text-yellow {
+    color: var(--accent-yellow);
+}
+
 .bg-card {
     background-color: var(--bg-secondary);
 }
 
+.bg-primary {
+    background-color: var(--bg-primary);
+}
+
+.bg-secondary {
+    background-color: var(--bg-secondary);
+}
+
+.bg-tertiary {
+    background-color: var(--bg-tertiary);
+}
+
 .border-card {
     border-color: var(--border-primary);
+}
+
+/* Responsive Utilities */
+@media (max-width: 640px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1024px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
 }
 
