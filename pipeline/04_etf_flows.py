@@ -90,7 +90,8 @@ class ETFFlowAnalyzer:
         if len(df) < 30:
             return None
         
-        df = df.sort_values('Date').reset_index(drop=True)
+        # yfinance returns date as index, so sort by index then reset
+        df = df.sort_index().reset_index(drop=True)
         
         # Calculate OBV
         obv = self.calculate_obv(df)
