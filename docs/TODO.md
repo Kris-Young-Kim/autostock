@@ -372,11 +372,11 @@ bash bin/run_server.sh
 
 #### 5.1 HTML 템플릿 구조
 
-- [ ] `web/templates/index.html` 생성
-  - [ ] 기본 HTML5 구조
-  - [ ] Tailwind CSS CDN 연결
-  - [ ] Pretendard 폰트 적용 (globals.css)
-  - [ ] 메타 태그 설정 (반응형)
+- [x] `web/templates/index.html` 생성
+  - [x] 기본 HTML5 구조
+  - [x] Tailwind CSS CDN 연결
+  - [x] Pretendard 폰트 적용 (globals.css)
+  - [x] 메타 태그 설정 (반응형)
 
 #### 5.2 대시보드 레이아웃 구성
 
