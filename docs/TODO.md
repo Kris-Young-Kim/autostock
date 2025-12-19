@@ -612,9 +612,9 @@ bash bin/run_server.sh
 
 ### 에러 핸들링
 
-- [ ] 전역 예외 핸들러
-- [ ] Retry 로직 (Exponential Backoff)
-- [ ] Rate Limiting 처리
+- [x] 전역 예외 핸들러
+- [x] Retry 로직 (Exponential Backoff)
+- [x] Rate Limiting 처리
 
 ### 테스트 및 검증
 

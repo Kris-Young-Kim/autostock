@@ -23,6 +23,7 @@ from core.config import (
     PORT,
     FLASK_ENV
 )
+from core.utils import GlobalExceptionHandler
 
 # Setup logging
 logger = setup_logging('server.log')
@@ -30,6 +31,20 @@ logger = setup_logging('server.log')
 # Initialize Flask app
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False  # Support Korean characters
+
+# Global exception handler
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """전역 예외 핸들러"""
+    error_info = GlobalExceptionHandler.handle_api_error(e, "Flask Application")
+    logger.error(f"Unhandled exception: {e}", exc_info=True)
+    
+    # Return appropriate status code
+    status_code = 500
+    if hasattr(e, 'code'):
+        status_code = e.code
+    
+    return jsonify(error_info), status_code
 
 # Sector mapping for major US stocks (S&P 500 + popular stocks)
 SECTOR_MAP = {

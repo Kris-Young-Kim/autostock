@@ -26,6 +26,7 @@ from core.config import (
     AI_SUMMARIES_FILE,
     GOOGLE_API_KEY
 )
+from core.utils import retry_with_backoff, ai_api_rate_limiter
 
 # Setup logging
 logger = setup_logging('pipeline.log')
@@ -78,6 +79,7 @@ class GeminiGenerator:
     def __init__(self):
         self.api_key = GOOGLE_API_KEY
     
+    @retry_with_backoff(max_retries=3, base_delay=2.0, max_delay=30.0, exceptions=(Exception,))
     def generate(self, ticker: str, data: Dict, news: List[Dict], lang: str = 'ko') -> str:
         """
         Generate AI summary for a stock
@@ -258,12 +260,12 @@ class AIStockAnalyzer:
             news = self.news_collector.get_news(ticker)
             logger.debug(f"   Collected {len(news)} news items")
             
-            # Generate summaries
+            # Generate summaries with rate limiting
+            ai_api_rate_limiter.wait_if_needed()
             summary_ko = self.generator.generate(ticker, row.to_dict(), news, 'ko')
-            time.sleep(0.5)  # Rate limiting
             
+            ai_api_rate_limiter.wait_if_needed()
             summary_en = self.generator.generate(ticker, row.to_dict(), news, 'en')
-            time.sleep(0.5)  # Rate limiting
             
             # Store results
             results[ticker] = {

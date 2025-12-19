@@ -20,6 +20,7 @@ from core.config import (
     AI_SUMMARIES_FILE,
     DATA_PROCESSED_DIR
 )
+from core.utils import retry_with_backoff, yfinance_rate_limiter, GlobalExceptionHandler
 import json
 import pandas as pd
 import numpy as np
@@ -284,8 +285,15 @@ def register_routes(app: Flask, get_sector_func, calculate_rsi_func, analyze_tre
             if period not in valid_periods:
                 period = '6mo'
             
-            stock = yf.Ticker(ticker)
-            hist = stock.history(period=period)
+            # Rate limiting
+            yfinance_rate_limiter.wait_if_needed()
+            
+            @retry_with_backoff(max_retries=2, base_delay=1.0)
+            def fetch_chart_data():
+                stock = yf.Ticker(ticker)
+                return stock.history(period=period)
+            
+            hist = fetch_chart_data()
             
             if hist.empty:
                 return jsonify({'error': 'No data available'}), 404

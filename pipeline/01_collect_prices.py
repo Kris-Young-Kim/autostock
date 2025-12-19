@@ -23,6 +23,7 @@ from core.config import (
     PRICES_FILE,
     STOCKS_LIST_FILE
 )
+from core.utils import retry_with_backoff, yfinance_rate_limiter
 
 # Setup logging
 logger = setup_logging('pipeline.log')
