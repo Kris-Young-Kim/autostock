@@ -195,10 +195,12 @@ python pipeline/update_all.py           # 전체 실행
 
 #### 2.5 포트폴리오 리스크 분석 (`portfolio_risk.py`)
 
-- [ ] `pipeline/portfolio_risk.py` 구현
-  - [ ] 상관관계 매트릭스 계산
-  - [ ] 포트폴리오 변동성 계산
-  - [ ] `portfolio_risk.json` 저장
+- [x] `pipeline/portfolio_risk.py` 구현
+  - [x] 상관관계 매트릭스 계산
+  - [x] 포트폴리오 변동성 계산
+  - [x] Beta 계산 (SPY 대비)
+  - [x] Diversification Ratio 계산
+  - [x] `portfolio_risk.json` 저장
 
 **출력 파일:**
 
