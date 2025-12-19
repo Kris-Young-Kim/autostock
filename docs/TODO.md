@@ -576,12 +576,12 @@ bash bin/run_server.sh
 
 #### 6.6 유틸리티 함수
 
-- [ ] `translateUI()`
-  - [ ] i18n 딕셔너리 정의
-  - [ ] `data-i18n` 속성 기반 번역
-- [ ] `formatNumber(value)`
-- [ ] `formatPercent(value)`
-- [ ] `getColorForChange(change)`
+- [x] `translateUI()`
+  - [x] i18n 딕셔너리 정의
+  - [x] `data-i18n` 속성 기반 번역
+- [x] `formatNumber(value)`
+- [x] `formatPercent(value)`
+- [x] `getColorForChange(change)` (구현: `getColorClass()`)
 
 #### 6.7 이벤트 리스너
 
