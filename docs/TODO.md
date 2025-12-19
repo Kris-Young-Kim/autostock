@@ -49,13 +49,13 @@ Phase 2: 웹 서버 및 프론트엔드 (Part 4, 5, 6)
 
 #### 1.2 가격 데이터 수집 (`create_us_daily_prices.py`)
 
-- [ ] `pipeline/01_collect_prices.py` 구현
-  - [ ] S&P 500 종목 리스트 로드
-  - [ ] yfinance를 통한 일일 가격 데이터 수집
-  - [ ] 증분 업데이트 로직 (기존 데이터 확인 후 최신 데이터만 추가)
-  - [ ] `us_daily_prices.csv` 저장
-  - [ ] `us_stocks_list.csv` 저장
-  - [ ] 로깅 구현 (`logs/pipeline.log`)
+- [x] `pipeline/01_collect_prices.py` 구현
+  - [x] S&P 500 종목 리스트 로드
+  - [x] yfinance를 통한 일일 가격 데이터 수집
+  - [x] 증분 업데이트 로직 (기존 데이터 확인 후 최신 데이터만 추가)
+  - [x] `us_daily_prices.csv` 저장
+  - [x] `us_stocks_list.csv` 저장
+  - [x] 로깅 구현 (`logs/pipeline.log`)
 
 **출력 파일:**
 

@@ -93,4 +93,3 @@ FINAL_REPORT_FILE = DATA_PROCESSED_DIR / 'final_top10_report.json'
 SMART_MONEY_CURRENT_FILE = DATA_PROCESSED_DIR / 'smart_money_current.json'
 WEEKLY_CALENDAR_FILE = DATA_PROCESSED_DIR / 'weekly_calendar.json'
 ETF_FLOW_ANALYSIS_FILE = DATA_PROCESSED_DIR / 'etf_flow_analysis.json'
-
