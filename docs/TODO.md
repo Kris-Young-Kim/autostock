@@ -473,12 +473,16 @@ bash bin/run_server.sh
 
 #### 6.1 전역 변수 및 상태 관리
 
-- [ ] `web/templates/index.html`에 `<script>` 섹션 추가
-  - [ ] `currentLang` (localStorage 기반)
-  - [ ] `currentModel` (localStorage 기반)
-  - [ ] `usStockChart` (Lightweight Charts 인스턴스)
-  - [ ] `currentChartPick` (현재 선택 종목)
-  - [ ] `indicatorState` (기술적 지표 상태)
+- [x] `web/static/js/app.js` 생성
+  - [x] `currentLang` (localStorage 기반, 기본값: 'ko')
+  - [x] `currentModel` (localStorage 기반, 기본값: 'gemini')
+  - [x] `usStockChart` (Lightweight Charts 인스턴스)
+  - [x] `currentChartPick` (현재 선택 종목)
+  - [x] `indicatorState` (기술적 지표 상태: rsi, macd, bb, sr)
+  - [x] `currentChartPeriod` (차트 기간 상태)
+  - [x] `realtimePriceInterval`, `macroAnalysisInterval` (인터벌 관리)
+  - [x] `i18n` 객체 (한국어/영어 번역)
+  - [x] 유틸리티 함수 (saveState, loadState, formatNumber, formatPercent, getColorClass, translateUI, fetchAPI)
 
 #### 6.2 초기화 함수
 

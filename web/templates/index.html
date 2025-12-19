@@ -374,10 +374,17 @@
         </div>
     </div>
 
-    <!-- JavaScript -->
+    <!-- Application JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    <!-- UI Event Handlers -->
     <script>
+        // Load state from localStorage
+        loadState();
+        
         // Initialize app
         console.log('US Market Smart Money Alpha Platform initialized');
+        console.log('Language:', currentLang, 'Model:', currentModel);
         
         // SNB Toggle
         document.getElementById('snb-toggle').addEventListener('click', function() {
@@ -423,6 +430,31 @@
             document.getElementById('ai-model-modal').classList.remove('show');
         });
         
+        // Close modal on overlay click
+        document.getElementById('ai-model-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+            }
+        });
+        
+        // AI Model Selection
+        document.querySelectorAll('#ai-model-modal button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const modelText = this.querySelector('.font-medium').textContent.toLowerCase();
+                currentModel = modelText === 'gemini' ? 'gemini' : 'gpt';
+                saveState();
+                
+                // Update UI
+                document.getElementById('ai-model-btn').querySelector('span').textContent = modelText.charAt(0).toUpperCase() + modelText.slice(1);
+                document.getElementById('ai-model-modal').classList.remove('show');
+                
+                // Reload macro analysis with new model
+                if (typeof reloadMacroAnalysis === 'function') {
+                    reloadMacroAnalysis();
+                }
+            });
+        });
+        
         // Tab switching
         document.querySelectorAll('.nav-tab').forEach(tab => {
             tab.addEventListener('click', function() {
@@ -432,16 +464,41 @@
                 });
                 this.classList.add('active', 'text-white', 'border-white');
                 this.classList.remove('text-gray-400', 'border-transparent');
+                
+                // Handle tab content switching (to be implemented)
+                const tabName = this.getAttribute('data-tab');
+                console.log('Switched to tab:', tabName);
             });
         });
         
         // Language toggle
-        let currentLang = 'ko';
         document.getElementById('lang-toggle').addEventListener('click', function() {
             currentLang = currentLang === 'ko' ? 'en' : 'ko';
+            saveState();
+            
+            // Update UI
             document.getElementById('lang-text').textContent = currentLang.toUpperCase();
             document.getElementById('footer-lang').textContent = currentLang.toUpperCase();
+            
+            // Translate UI
+            translateUI();
+            
+            // Reload data with new language
+            if (typeof updateUSMarketDashboard === 'function') {
+                updateUSMarketDashboard();
+            }
+            if (typeof reloadMacroAnalysis === 'function') {
+                reloadMacroAnalysis();
+            }
         });
+        
+        // Initialize language display
+        document.getElementById('lang-text').textContent = currentLang.toUpperCase();
+        document.getElementById('footer-lang').textContent = currentLang.toUpperCase();
+        
+        // Update AI model display
+        const modelDisplay = currentModel.charAt(0).toUpperCase() + currentModel.slice(1);
+        document.getElementById('ai-model-btn').querySelector('span').textContent = modelDisplay;
         
         // Update time
         function updateTime() {
@@ -450,6 +507,9 @@
         }
         updateTime();
         setInterval(updateTime, 1000);
+        
+        // Initialize translations
+        translateUI();
     </script>
 </body>
 </html>
