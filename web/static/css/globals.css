@@ -392,16 +392,311 @@ tr:hover td {
     border-color: var(--border-primary);
 }
 
-/* Responsive Utilities */
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+/* Mobile Devices (up to 640px) */
 @media (max-width: 640px) {
     html {
         font-size: 14px;
     }
+    
+    /* SNB: Hide by default on mobile */
+    #snb {
+        position: fixed;
+        left: -100%;
+        top: 56px; /* Below GNB */
+        height: calc(100vh - 56px);
+        z-index: 999;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    #snb.show {
+        left: 0;
+    }
+    
+    /* GNB: Compact layout */
+    #gnb {
+        padding: 0.5rem 1rem;
+    }
+    
+    #gnb h1 {
+        font-size: 1rem;
+    }
+    
+    #gnb .text-xs {
+        display: none; /* Hide subtitle on mobile */
+    }
+    
+    /* Search bar: Hide on mobile */
+    #gnb .max-w-xl {
+        display: none;
+    }
+    
+    /* Action buttons: Smaller */
+    #gnb button {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    #gnb button span {
+        display: none; /* Hide text, show only icons */
+    }
+    
+    /* LNB: Scrollable tabs */
+    #lnb {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    #lnb .nav-tab {
+        white-space: nowrap;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Main content: Full width, no sidebars */
+    main {
+        width: 100%;
+    }
+    
+    /* Grid: Single column */
+    .grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Market Indices: 2 columns */
+    #indices-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem;
+    }
+    
+    /* Chart: Full height */
+    #chart-container {
+        height: 300px !important;
+    }
+    
+    /* Table: Horizontal scroll */
+    .overflow-x-auto {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+        min-width: 600px;
+    }
+    
+    /* Cards: Full width, less padding */
+    .card, .bg-secondary {
+        padding: 0.75rem;
+    }
+    
+    /* Accordion: Smaller padding */
+    .accordion-header {
+        padding: 0.75rem;
+    }
+    
+    /* Modal: Full screen on mobile */
+    .modal-content {
+        max-width: 100vw;
+        max-height: 100vh;
+        border-radius: 0;
+        margin: 0;
+    }
+    
+    /* Stepper: Smaller circles */
+    .stepper-circle {
+        width: 24px;
+        height: 24px;
+        font-size: 0.75rem;
+    }
+    
+    .stepper-step::after {
+        top: 12px;
+    }
+    
+    /* FNB: Stack vertically */
+    #fnb {
+        flex-direction: column;
+        height: auto;
+        padding: 0.75rem;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    #fnb > div {
+        text-align: center;
+    }
 }
 
+/* Tablet Devices (641px to 1023px) */
+@media (min-width: 641px) and (max-width: 1023px) {
+    html {
+        font-size: 15px;
+    }
+    
+    /* SNB: Collapsible */
+    #snb {
+        position: fixed;
+        left: -100%;
+        top: 56px;
+        height: calc(100vh - 56px);
+        z-index: 999;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+        transition: left var(--transition-base);
+    }
+    
+    #snb.show {
+        left: 0;
+    }
+    
+    /* Search bar: Smaller */
+    #gnb .max-w-xl {
+        max-width: 300px;
+        margin: 0 1rem;
+    }
+    
+    /* Grid: 2 columns for main content */
+    .grid.grid-cols-12 > .col-span-12.lg\\:col-span-8 {
+        grid-column: span 12;
+    }
+    
+    .grid.grid-cols-12 > .col-span-12.lg\\:col-span-4 {
+        grid-column: span 12;
+    }
+    
+    /* Market Indices: 3-4 columns */
+    #indices-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    /* Chart: Medium height */
+    #chart-container {
+        height: 350px !important;
+    }
+    
+    /* Table: Better spacing */
+    table {
+        font-size: 0.875rem;
+    }
+    
+    th, td {
+        padding: 0.75rem;
+    }
+    
+    /* Cards: Medium padding */
+    .card, .bg-secondary {
+        padding: 1rem;
+    }
+}
+
+/* Desktop Devices (1024px and above) */
 @media (min-width: 1024px) {
     html {
         font-size: 16px;
+    }
+    
+    /* SNB: Always visible */
+    #snb {
+        position: relative;
+        left: 0;
+        top: 0;
+        height: auto;
+        box-shadow: none;
+    }
+    
+    /* Main content: With sidebar */
+    main {
+        width: calc(100% - 16rem); /* 256px sidebar */
+    }
+    
+    /* Market Indices: 4-6 columns */
+    #indices-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+    
+    @media (min-width: 1280px) {
+        #indices-grid {
+            grid-template-columns: repeat(6, 1fr) !important;
+        }
+    }
+    
+    /* Chart: Full height */
+    #chart-container {
+        height: 400px;
+    }
+    
+    /* Table: Full features */
+    table {
+        font-size: 0.875rem;
+    }
+    
+    /* Cards: Full padding */
+    .card, .bg-secondary {
+        padding: 1.5rem;
+    }
+    
+    /* Max width container for very large screens */
+    @media (min-width: 1536px) {
+        body {
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+    }
+}
+
+/* Landscape Mobile Orientation */
+@media (max-width: 896px) and (orientation: landscape) {
+    /* Reduce header heights */
+    #gnb {
+        height: 48px;
+    }
+    
+    #lnb {
+        height: 36px;
+    }
+    
+    /* Adjust SNB position */
+    #snb {
+        top: 48px;
+        height: calc(100vh - 48px);
+    }
+    
+    /* Chart: Shorter */
+    #chart-container {
+        height: 250px !important;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    button, .nav-link, .nav-tab {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .nav-link:hover,
+    .nav-tab:hover,
+    button:hover {
+        background-color: transparent;
+    }
+    
+    /* Active states instead */
+    .nav-link:active,
+    .nav-tab:active,
+    button:active {
+        background-color: var(--bg-tertiary);
+    }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Sharper borders */
+    * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
 }
 
@@ -414,6 +709,15 @@ tr:hover td {
     
     .no-print {
         display: none !important;
+    }
+    
+    #gnb, #snb, #lnb, #fnb {
+        display: none !important;
+    }
+    
+    main {
+        width: 100% !important;
+        padding: 0 !important;
     }
 }
 
