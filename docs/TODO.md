@@ -78,12 +78,12 @@ Phase 2: 웹 서버 및 프론트엔드 (Part 4, 5, 6)
 
 #### 1.4 기관 보유 분석 (`analyze_13f.py`)
 
-- [ ] `pipeline/03_analyze_13f.py` 구현
-  - [ ] yfinance를 통한 기관 보유율 수집
-  - [ ] 인사이더 거래 데이터 수집
-  - [ ] Short Interest 수집
-  - [ ] Institutional Score 계산 (0-100)
-  - [ ] `us_13f_holdings.csv` 저장
+- [x] `pipeline/03_analyze_13f.py` 구현
+  - [x] yfinance를 통한 기관 보유율 수집
+  - [x] 인사이더 거래 데이터 수집
+  - [x] Short Interest 수집
+  - [x] Institutional Score 계산 (0-100)
+  - [x] `us_13f_holdings.csv` 저장
 
 **출력 파일:**
 
