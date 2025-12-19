@@ -37,10 +37,21 @@ def setup_logging(log_file: str = 'pipeline.log', level: int = logging.INFO):
     로깅 설정 초기화
     
     Args:
-        log_file: 로그 파일명
-        level: 로깅 레벨
+        log_file: 로그 파일명 (예: 'pipeline.log', 'server.log')
+        level: 로깅 레벨 (logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR)
+    
+    Returns:
+        logging.Logger: 설정된 로거 인스턴스
     """
     log_path = LOG_DIR / log_file
+    
+    # Get logger for the specific module/file
+    logger = logging.getLogger(log_file.replace('.log', ''))
+    logger.setLevel(level)
+    
+    # Prevent duplicate handlers
+    if logger.handlers:
+        return logger
     
     # Create formatter
     formatter = logging.Formatter(
@@ -48,8 +59,8 @@ def setup_logging(log_file: str = 'pipeline.log', level: int = logging.INFO):
         datefmt='%Y-%m-%d %H:%M:%S'
     )
     
-    # File handler
-    file_handler = logging.FileHandler(log_path, encoding='utf-8')
+    # File handler with UTF-8 encoding
+    file_handler = logging.FileHandler(log_path, encoding='utf-8', mode='a')
     file_handler.setLevel(level)
     file_handler.setFormatter(formatter)
     
@@ -58,13 +69,14 @@ def setup_logging(log_file: str = 'pipeline.log', level: int = logging.INFO):
     console_handler.setLevel(level)
     console_handler.setFormatter(formatter)
     
-    # Root logger
-    root_logger = logging.getLogger()
-    root_logger.setLevel(level)
-    root_logger.addHandler(file_handler)
-    root_logger.addHandler(console_handler)
+    # Add handlers to logger
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
     
-    return root_logger
+    # Prevent propagation to root logger (avoid duplicate logs)
+    logger.propagate = False
+    
+    return logger
 
 # API Keys
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')

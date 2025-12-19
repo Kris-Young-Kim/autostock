@@ -603,12 +603,12 @@ bash bin/run_server.sh
 
 ### 로깅 시스템
 
-- [ ] `core/config.py` 구현
-  - [ ] 로깅 설정
-  - [ ] 경로 상수 정의
-- [ ] 모든 스크립트에 로깅 적용
-  - [ ] `logs/pipeline.log`
-  - [ ] `logs/server.log`
+- [x] `core/config.py` 구현
+  - [x] 로깅 설정
+  - [x] 경로 상수 정의
+- [x] 모든 스크립트에 로깅 적용
+  - [x] `logs/pipeline.log` (파이프라인 스크립트용)
+  - [x] `logs/server.log` (웹 서버용)
 
 ### 에러 핸들링
 
