@@ -212,17 +212,17 @@ python pipeline/update_all.py           # 전체 실행
 
 #### 3.1 매크로 경제 분석 (`macro_analyzer.py`)
 
-- [ ] `pipeline/macro_analyzer.py` 구현
-  - [ ] 매크로 지표 수집
-    - [ ] VIX, DXY, 2Y/10Y Yield, GOLD, OIL, BTC
-    - [ ] SPY, QQQ
-  - [ ] Yield Spread 계산
-  - [ ] 뉴스 수집 (Google News RSS)
-  - [ ] Gemini 3.0 AI 분석 통합
-    - [ ] 한국어 분석 생성
-    - [ ] 영어 분석 생성
-  - [ ] `macro_analysis.json` 저장
-  - [ ] `macro_analysis_en.json` 저장 (선택)
+- [x] `pipeline/macro_analyzer.py` 구현
+  - [x] 매크로 지표 수집
+    - [x] VIX, DXY, 2Y/10Y Yield, GOLD, OIL, BTC
+    - [x] SPY, QQQ
+  - [x] Yield Spread 계산
+  - [x] 뉴스 수집 (Google News RSS)
+  - [x] Gemini 3.0 AI 분석 통합
+    - [x] 한국어 분석 생성
+    - [x] 영어 분석 생성
+  - [x] `macro_analysis.json` 저장
+  - [x] `macro_analysis_en.json` 저장
 
 **출력 파일:**
 
