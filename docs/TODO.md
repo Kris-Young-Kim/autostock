@@ -380,33 +380,49 @@ bash bin/run_server.sh
 
 #### 5.2 대시보드 레이아웃 구성
 
-- [ ] 헤더 섹션
-  - [ ] 로고/제목
-  - [ ] 언어 전환 버튼 (KO/EN)
-  - [ ] AI 모델 선택 (Gemini/GPT)
-- [ ] Market Indices 섹션
-  - [ ] 그리드 레이아웃 (11개 지수)
-  - [ ] 실시간 가격 및 변동률 표시
-  - [ ] 색상 코딩 (상승/하락)
-- [ ] Smart Money Picks 테이블
-  - [ ] 상위 10개 종목 리스트
-  - [ ] 컬럼: Rank, Ticker, Name, Score, Price, Change, Sector
-  - [ ] 클릭 가능한 행 (차트 로드)
-- [ ] 차트 뷰 섹션
-  - [ ] Lightweight Charts 컨테이너
-  - [ ] 차트 헤더 (Ticker, Name, Score)
-  - [ ] 기간 선택 버튼 (1M, 3M, 6M, 1Y, 2Y, 5Y)
-  - [ ] 기술적 지표 토글 버튼 (RSI, MACD, BB, S/R)
-- [ ] AI Summary 섹션
-  - [ ] 선택 종목의 AI 요약 표시
-  - [ ] 언어 전환 지원
-- [ ] Macro Analysis 섹션
-  - [ ] 매크로 지표 그리드
-  - [ ] AI 분석 텍스트 블록
-- [ ] ETF Flows 섹션
-  - [ ] 섹터별 자금 흐름 표시
-- [ ] 경제 캘린더 섹션
-  - [ ] 주간 이벤트 리스트
+- [x] 헤더 섹션 (GNB)
+  - [x] 로고/제목
+  - [x] 언어 전환 버튼 (KO/EN)
+  - [x] AI 모델 선택 (Gemini/GPT) - Gemini 기본 선택
+  - [x] 검색 바
+  - [x] 설정 버튼
+- [x] 사이드 네비게이션 (SNB)
+  - [x] 메인 메뉴 (Dashboard, Smart Money, Macro, ETF Flows, Calendar, Portfolio)
+  - [x] 아코디언 메뉴 (Advanced Features)
+  - [x] 토글 기능
+- [x] 로컬 네비게이션 (LNB)
+  - [x] 탭 메뉴 (Market Overview, Analysis, Sectors, Calendar)
+- [x] Market Indices 섹션
+  - [x] 그리드 레이아웃 (반응형)
+  - [x] 실시간 가격 및 변동률 표시 준비
+  - [x] 색상 코딩 준비 (상승/하락)
+- [x] Smart Money Picks 테이블
+  - [x] 상위 10개 종목 리스트 구조
+  - [x] 컬럼: Rank, Ticker, Name, Score, Price, Change, Sector
+  - [x] 클릭 가능한 행 준비 (차트 로드)
+- [x] 차트 뷰 섹션
+  - [x] Lightweight Charts 컨테이너
+  - [x] 차트 헤더 (Ticker, Name, Score)
+  - [x] 기간 선택 버튼 (1M, 3M, 6M, 1Y, 2Y, 5Y)
+  - [x] 기술적 지표 토글 버튼 (RSI, MACD, BB, S/R)
+- [x] AI Summary 섹션
+  - [x] 선택 종목의 AI 요약 표시 준비
+  - [x] 언어 전환 지원
+- [x] Macro Analysis 섹션 (아코디언)
+  - [x] 매크로 지표 그리드 준비
+  - [x] AI 분석 텍스트 블록 준비
+- [x] ETF Flows 섹션 (아코디언)
+  - [x] 섹터별 자금 흐름 표시 준비
+- [x] 경제 캘린더 섹션 (아코디언)
+  - [x] 주간 이벤트 리스트 준비
+- [x] 하단 네비게이션 (FNB)
+  - [x] 마지막 업데이트 시간
+  - [x] 데이터 소스 정보
+  - [x] AI 모델 및 언어 표시
+- [x] 모달 (AI Model Selection)
+  - [x] Gemini/GPT 선택 모달
+- [x] 스테어 (Analysis Steps)
+  - [x] 분석 단계 표시 컴포넌트
 
 #### 5.3 CSS 스타일링
 

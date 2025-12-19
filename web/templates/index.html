@@ -27,20 +27,535 @@
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        
+        /* Navigation Styles */
+        .nav-link {
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            background-color: var(--bg-tertiary);
+        }
+        
+        .nav-link.active {
+            background-color: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-blue);
+        }
+        
+        /* Accordion Styles */
+        .accordion-header {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .accordion-header:hover {
+            background-color: var(--bg-tertiary);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .accordion-content.open {
+            max-height: 2000px;
+            transition: max-height 0.3s ease-in;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        /* Stepper Styles */
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .stepper-step {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        
+        .stepper-step::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background-color: var(--border-primary);
+            z-index: 0;
+        }
+        
+        .stepper-step:last-child::after {
+            display: none;
+        }
+        
+        .stepper-step.completed::after {
+            background-color: var(--accent-green);
+        }
+        
+        .stepper-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--bg-tertiary);
+            border: 2px solid var(--border-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            position: relative;
+        }
+        
+        .stepper-step.completed .stepper-circle {
+            background-color: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+        
+        .stepper-step.active .stepper-circle {
+            border-color: var(--accent-blue);
+            background-color: var(--accent-blue);
         }
     </style>
 </head>
-<body>
-    <!-- Main Container -->
-    <div id="app" class="min-h-screen">
-        <!-- Content will be loaded here -->
+<body class="flex flex-col h-screen">
+    <!-- GNB: Global Navigation Bar -->
+    <header id="gnb" class="h-14 border-b border-card flex items-center px-4 justify-between shrink-0 bg-card">
+        <div class="flex items-center gap-4">
+            <!-- SNB Toggle Button -->
+            <button id="snb-toggle" class="text-gray-400 hover:text-white transition-colors">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <!-- Logo/Title -->
+            <div class="flex items-center gap-2">
+                <h1 class="text-lg font-bold text-white">US Market Alpha</h1>
+                <span class="text-xs text-gray-500">Smart Money Platform</span>
+            </div>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-xl mx-8 hidden md:block">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-600"></i>
+                </div>
+                <input type="text" id="search-input"
+                    class="block w-full pl-10 pr-3 py-1.5 border border-card rounded bg-card text-gray-300 placeholder-gray-600 focus:outline-none focus:border-accent-blue focus:ring-1 focus:ring-accent-blue text-sm"
+                    placeholder="Search ticker or company name...">
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2">
+            <!-- Language Toggle -->
+            <button id="lang-toggle" class="bg-secondary hover:bg-tertiary text-gray-300 border border-card px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 transition-colors">
+                <span id="lang-text">KO</span>
+                <i class="fas fa-globe"></i>
+            </button>
+            
+            <!-- AI Model Selector (Gemini selected) -->
+            <button id="ai-model-btn" class="bg-accent-blue hover:bg-blue-600 text-white border border-transparent px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 transition-colors">
+                <i class="fas fa-robot"></i>
+                <span>Gemini</span>
+                <i class="fas fa-chevron-down text-xs"></i>
+            </button>
+            
+            <!-- Settings -->
+            <button id="settings-btn" class="bg-secondary hover:bg-tertiary text-gray-300 border border-card px-3 py-1.5 rounded text-xs font-medium transition-colors">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Layout Container -->
+    <div class="flex flex-1 overflow-hidden">
+        <!-- SNB: Side Navigation Bar -->
+        <aside id="snb" class="w-64 bg-secondary border-r border-card flex flex-col shrink-0 transition-all duration-300">
+            <nav class="flex-1 overflow-y-auto p-4">
+                <ul class="space-y-1">
+                    <li>
+                        <a href="#dashboard" class="nav-link active flex items-center gap-3 px-3 py-2 rounded text-sm">
+                            <i class="fas fa-chart-line w-5"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#smart-money" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-sm">
+                            <i class="fas fa-star w-5"></i>
+                            <span>Smart Money Picks</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#macro" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-sm">
+                            <i class="fas fa-globe-americas w-5"></i>
+                            <span>Macro Analysis</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#etf-flows" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-sm">
+                            <i class="fas fa-exchange-alt w-5"></i>
+                            <span>ETF Flows</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#calendar" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-sm">
+                            <i class="fas fa-calendar-alt w-5"></i>
+                            <span>Economic Calendar</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#portfolio" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-sm">
+                            <i class="fas fa-briefcase w-5"></i>
+                            <span>Portfolio</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Accordion: Advanced Features -->
+                <div class="mt-6">
+                    <div class="accordion-header flex items-center justify-between px-3 py-2 rounded text-sm font-medium text-gray-400">
+                        <span>Advanced</span>
+                        <i class="fas fa-chevron-down text-xs transition-transform"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <ul class="space-y-1 mt-2">
+                            <li>
+                                <a href="#options-flow" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-sm">
+                                    <i class="fas fa-chart-bar w-5"></i>
+                                    <span>Options Flow</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#insider" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-sm">
+                                    <i class="fas fa-user-secret w-5"></i>
+                                    <span>Insider Activity</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#risk" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-sm">
+                                    <i class="fas fa-shield-alt w-5"></i>
+                                    <span>Risk Analysis</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- LNB: Local Navigation Bar (Tabs) -->
+            <nav id="lnb" class="h-10 border-b border-card flex items-center px-4 gap-1 bg-secondary shrink-0">
+                <button class="nav-tab active px-4 py-2 text-sm font-medium text-white border-b-2 border-white" data-tab="market">
+                    Market Overview
+                </button>
+                <button class="nav-tab px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border-b-2 border-transparent transition-colors" data-tab="analysis">
+                    Analysis
+                </button>
+                <button class="nav-tab px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border-b-2 border-transparent transition-colors" data-tab="sectors">
+                    Sectors
+                </button>
+                <button class="nav-tab px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border-b-2 border-transparent transition-colors" data-tab="calendar">
+                    Calendar
+                </button>
+            </nav>
+
+            <!-- Content Area (Scrollable) -->
+            <div class="flex-1 overflow-y-auto p-4 bg-primary">
+                <!-- Market Indices Section -->
+                <section id="market-indices" class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-white">Market Indices</h2>
+                        <span class="text-xs text-gray-500">Real-time</span>
+                    </div>
+                    <div id="indices-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Main Grid Layout -->
+                <div class="grid grid-cols-12 gap-6">
+                    <!-- Left Column: Chart & Table (8 cols) -->
+                    <div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+                        <!-- Price Chart Section -->
+                        <div class="bg-secondary border border-card rounded p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-sm font-bold text-white">Price Chart</h3>
+                                    <span id="chart-ticker" class="text-xs text-accent-blue font-mono"></span>
+                                </div>
+                                <!-- Period Buttons -->
+                                <div class="flex items-center gap-1 bg-primary rounded p-1">
+                                    <button class="chart-period-btn px-2 py-1 text-xs font-medium text-gray-400 hover:text-white hover:bg-tertiary rounded" data-period="1M">1M</button>
+                                    <button class="chart-period-btn px-2 py-1 text-xs font-medium text-gray-400 hover:text-white hover:bg-tertiary rounded" data-period="3M">3M</button>
+                                    <button class="chart-period-btn px-2 py-1 text-xs font-medium text-white bg-tertiary rounded" data-period="6M">6M</button>
+                                    <button class="chart-period-btn px-2 py-1 text-xs font-medium text-gray-400 hover:text-white hover:bg-tertiary rounded" data-period="1Y">1Y</button>
+                                    <button class="chart-period-btn px-2 py-1 text-xs font-medium text-gray-400 hover:text-white hover:bg-tertiary rounded" data-period="2Y">2Y</button>
+                                    <button class="chart-period-btn px-2 py-1 text-xs font-medium text-gray-400 hover:text-white hover:bg-tertiary rounded" data-period="5Y">5Y</button>
+                                </div>
+                            </div>
+                            <!-- Indicator Toggles -->
+                            <div class="flex items-center gap-2 mb-4">
+                                <button class="indicator-toggle px-2 py-1 text-xs bg-tertiary hover:bg-accent-blue rounded" data-indicator="rsi">RSI</button>
+                                <button class="indicator-toggle px-2 py-1 text-xs bg-tertiary hover:bg-accent-blue rounded" data-indicator="macd">MACD</button>
+                                <button class="indicator-toggle px-2 py-1 text-xs bg-tertiary hover:bg-accent-blue rounded" data-indicator="bb">BB</button>
+                                <button class="indicator-toggle px-2 py-1 text-xs bg-tertiary hover:bg-accent-blue rounded" data-indicator="sr">S/R</button>
+                            </div>
+                            <div id="chart-container" class="h-96 w-full"></div>
+                        </div>
+
+                        <!-- Smart Money Picks Table -->
+                        <div class="bg-secondary border border-card rounded p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-white">Smart Money Picks</h3>
+                                <span class="text-xs text-gray-500">Top 10</span>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="border-b border-card text-gray-400">
+                                            <th class="py-3 text-left">Rank</th>
+                                            <th class="py-3 text-left">Ticker</th>
+                                            <th class="py-3 text-left">Name</th>
+                                            <th class="py-3 text-right">Score</th>
+                                            <th class="py-3 text-right">Price</th>
+                                            <th class="py-3 text-right">Change</th>
+                                            <th class="py-3 text-center">Sector</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="picks-table-body" class="divide-y divide-card">
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: AI Summary & More (4 cols) -->
+                    <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+                        <!-- AI Summary Section -->
+                        <div class="bg-secondary border border-card rounded p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-bold text-white">AI Summary</h3>
+                                <button id="summary-lang-toggle" class="text-xs text-gray-400 hover:text-white">
+                                    <span id="summary-lang">KO</span>
+                                </button>
+                            </div>
+                            <div id="ai-summary-content" class="text-sm text-gray-300">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Macro Analysis Accordion -->
+                        <div class="bg-secondary border border-card rounded">
+                            <div class="accordion-header flex items-center justify-between px-4 py-3 border-b border-card">
+                                <h3 class="text-sm font-bold text-white">Macro Analysis</h3>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="p-4">
+                                    <div id="macro-indicators" class="grid grid-cols-2 gap-4 mb-4">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                    <div id="macro-analysis-text" class="text-sm text-gray-300">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ETF Flows Accordion -->
+                        <div class="bg-secondary border border-card rounded">
+                            <div class="accordion-header flex items-center justify-between px-4 py-3 border-b border-card">
+                                <h3 class="text-sm font-bold text-white">ETF Flows</h3>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="p-4">
+                                    <div id="etf-flows-content">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Economic Calendar Accordion -->
+                        <div class="bg-secondary border border-card rounded">
+                            <div class="accordion-header flex items-center justify-between px-4 py-3 border-b border-card">
+                                <h3 class="text-sm font-bold text-white">Economic Calendar</h3>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="p-4">
+                                    <div id="calendar-content">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-    
-    <!-- JavaScript will be loaded here -->
+
+    <!-- FNB: Footer Navigation Bar -->
+    <footer id="fnb" class="h-12 border-t border-card flex items-center justify-between px-4 bg-secondary shrink-0">
+        <div class="flex items-center gap-4 text-xs text-gray-500">
+            <span>Last Update: <span id="last-update-time">--</span></span>
+            <span>•</span>
+            <span>Data Source: Yahoo Finance, SEC</span>
+        </div>
+        <div class="flex items-center gap-4 text-xs text-gray-500">
+            <span>AI Model: <span class="text-accent-blue font-medium">Gemini</span></span>
+            <span>•</span>
+            <span>Language: <span id="footer-lang">KO</span></span>
+        </div>
+    </footer>
+
+    <!-- Modal: AI Model Selection -->
+    <div id="ai-model-modal" class="modal-overlay">
+        <div class="modal-content w-96 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-white">Select AI Model</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-2">
+                <button class="w-full text-left px-4 py-3 bg-tertiary hover:bg-accent-blue rounded border border-card">
+                    <div class="font-medium text-white">Gemini</div>
+                    <div class="text-xs text-gray-400">Google Gemini Pro</div>
+                </button>
+                <button class="w-full text-left px-4 py-3 bg-secondary hover:bg-tertiary rounded border border-card">
+                    <div class="font-medium text-white">GPT-4</div>
+                    <div class="text-xs text-gray-400">OpenAI GPT-4</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stepper: Analysis Steps (Example) -->
+    <div id="analysis-stepper" class="hidden bg-secondary border border-card rounded p-4 mb-6">
+        <div class="stepper">
+            <div class="stepper-step completed">
+                <div class="stepper-circle">
+                    <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <span class="text-xs text-gray-400 mt-2">Data Collection</span>
+            </div>
+            <div class="stepper-step completed">
+                <div class="stepper-circle">
+                    <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <span class="text-xs text-gray-400 mt-2">Analysis</span>
+            </div>
+            <div class="stepper-step active">
+                <div class="stepper-circle">
+                    <span class="text-white text-xs font-bold">3</span>
+                </div>
+                <span class="text-xs text-white mt-2 font-medium">AI Processing</span>
+            </div>
+            <div class="stepper-step">
+                <div class="stepper-circle">
+                    <span class="text-gray-400 text-xs">4</span>
+                </div>
+                <span class="text-xs text-gray-400 mt-2">Results</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
     <script>
-        // App initialization
+        // Initialize app
         console.log('US Market Smart Money Alpha Platform initialized');
+        
+        // SNB Toggle
+        document.getElementById('snb-toggle').addEventListener('click', function() {
+            const snb = document.getElementById('snb');
+            snb.classList.toggle('-translate-x-full');
+        });
+        
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const icon = this.querySelector('i');
+                content.classList.toggle('open');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+        
+        // Modal functionality
+        document.getElementById('ai-model-btn').addEventListener('click', function() {
+            document.getElementById('ai-model-modal').classList.add('show');
+        });
+        
+        document.getElementById('close-modal').addEventListener('click', function() {
+            document.getElementById('ai-model-modal').classList.remove('show');
+        });
+        
+        // Tab switching
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.nav-tab').forEach(t => {
+                    t.classList.remove('active', 'text-white', 'border-white');
+                    t.classList.add('text-gray-400', 'border-transparent');
+                });
+                this.classList.add('active', 'text-white', 'border-white');
+                this.classList.remove('text-gray-400', 'border-transparent');
+            });
+        });
+        
+        // Language toggle
+        let currentLang = 'ko';
+        document.getElementById('lang-toggle').addEventListener('click', function() {
+            currentLang = currentLang === 'ko' ? 'en' : 'ko';
+            document.getElementById('lang-text').textContent = currentLang.toUpperCase();
+            document.getElementById('footer-lang').textContent = currentLang.toUpperCase();
+        });
+        
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('last-update-time').textContent = now.toLocaleTimeString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
     </script>
 </body>
 </html>
-
