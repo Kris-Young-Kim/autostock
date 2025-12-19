@@ -390,15 +390,45 @@ class EnhancedSmartMoneyScreener:
             hist = hist.sort_index()
             spy_sorted = self.spy_data.sort_index()
             
-            # Calculate returns
-            stock_return_20d = (hist['Close'].iloc[-1] / hist['Close'].iloc[-21] - 1) * 100 if len(hist) >= 21 else 0
-            stock_return_60d = (hist['Close'].iloc[-1] / hist['Close'].iloc[0] - 1) * 100
+            # Helper function for safe return calculation
+            def safe_return(current, previous):
+                """Calculate return safely, handling zero/NaN/Inf"""
+                if pd.isna(current) or pd.isna(previous) or previous == 0:
+                    return 0.0
+                result = (current / previous - 1) * 100
+                if pd.isna(result) or np.isinf(result):
+                    return 0.0
+                return result
             
-            spy_return_20d = (spy_sorted['Close'].iloc[-1] / spy_sorted['Close'].iloc[-21] - 1) * 100 if len(spy_sorted) >= 21 else 0
-            spy_return_60d = (spy_sorted['Close'].iloc[-1] / spy_sorted['Close'].iloc[0] - 1) * 100
+            # Calculate returns with guards
+            stock_return_20d = safe_return(
+                hist['Close'].iloc[-1],
+                hist['Close'].iloc[-21]
+            ) if len(hist) >= 21 else 0.0
+            
+            stock_return_60d = safe_return(
+                hist['Close'].iloc[-1],
+                hist['Close'].iloc[0]
+            ) if len(hist) >= 60 and hist['Close'].iloc[0] > 0 else 0.0
+            
+            spy_return_20d = safe_return(
+                spy_sorted['Close'].iloc[-1],
+                spy_sorted['Close'].iloc[-21]
+            ) if len(spy_sorted) >= 21 else 0.0
+            
+            spy_return_60d = safe_return(
+                spy_sorted['Close'].iloc[-1],
+                spy_sorted['Close'].iloc[0]
+            ) if len(spy_sorted) >= 60 and spy_sorted['Close'].iloc[0] > 0 else 0.0
             
             rs_20d = stock_return_20d - spy_return_20d
             rs_60d = stock_return_60d - spy_return_60d
+            
+            # Ensure rs values are valid
+            if pd.isna(rs_20d) or np.isinf(rs_20d):
+                rs_20d = 0.0
+            if pd.isna(rs_60d) or np.isinf(rs_60d):
+                rs_60d = 0.0
             
             # RS Score (0-100)
             rs_score = 50

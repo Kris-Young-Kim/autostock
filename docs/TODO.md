@@ -172,11 +172,11 @@ python pipeline/update_all.py           # 전체 실행
 
 #### 2.3 옵션 플로우 분석 (`options_flow.py`)
 
-- [ ] `pipeline/options_flow.py` 구현
-  - [ ] 주요 종목 옵션 체인 데이터 수집
-  - [ ] Put/Call Ratio 계산
-  - [ ] Unusual Activity 감지
-  - [ ] `options_flow.json` 저장
+- [x] `pipeline/options_flow.py` 구현
+  - [x] 주요 종목 옵션 체인 데이터 수집
+  - [x] Put/Call Ratio 계산
+  - [x] Unusual Activity 감지
+  - [x] `options_flow.json` 저장
 
 **출력 파일:**
 
@@ -184,10 +184,10 @@ python pipeline/update_all.py           # 전체 실행
 
 #### 2.4 인사이더 추적 (`insider_tracker.py`)
 
-- [ ] `pipeline/insider_tracker.py` 구현
-  - [ ] 최근 6개월 인사이더 매매 추적
-  - [ ] Cluster Buying 감지
-  - [ ] `insider_moves.json` 저장
+- [x] `pipeline/insider_tracker.py` 구현
+  - [x] 최근 6개월 인사이더 매매 추적
+  - [x] Cluster Buying 감지
+  - [x] `insider_moves.json` 저장
 
 **출력 파일:**
 
