@@ -532,18 +532,33 @@ bash bin/run_server.sh
 
 #### 6.4 렌더링 함수
 
-- [ ] `renderUSMarketIndices(data)`
-  - [ ] 지수 그리드 렌더링
-- [ ] `renderUSSmartMoneyPicks(data)`
-  - [ ] 테이블 행 생성
-  - [ ] 클릭 이벤트 리스너 등록
-- [ ] `renderUSMacroAnalysis(data)`
-  - [ ] 매크로 지표 그리드 렌더링
-  - [ ] AI 분석 텍스트 표시
-- [ ] `renderUSETFFlows(data)`
-  - [ ] ETF 플로우 리스트 렌더링
-- [ ] `renderUSCalendar(data)`
-  - [ ] 경제 캘린더 렌더링
+- [x] `renderUSMarketIndices(data)` (`web/static/js/render.js`)
+  - [x] 지수 그리드 렌더링
+  - [x] 가격 및 변동률 표시
+  - [x] 색상 코딩 (상승/하락)
+  - [x] 호버 효과
+- [x] `renderUSSmartMoneyPicks(data)` (`web/static/js/render.js`)
+  - [x] 테이블 행 생성
+  - [x] Rank, Ticker, Name, Score, Price, Change, Sector 컬럼
+  - [x] Score 색상 코딩 (80+: 파랑, 60+: 초록, 40+: 노랑)
+  - [x] 클릭 이벤트 리스너 등록 (차트 로드)
+  - [x] 행 선택 하이라이트
+  - [x] data-ticker 속성 추가 (실시간 업데이트용)
+- [x] `renderUSMacroAnalysis(data)` (`web/static/js/render.js`)
+  - [x] 매크로 지표 그리드 렌더링
+  - [x] 지표별 특수 스타일링 (VIX: 보라, Crypto: 노랑, Yield: 파랑)
+  - [x] AI 분석 텍스트 표시 (언어별)
+  - [x] 일일 변동률 표시
+- [x] `renderUSETFFlows(data)` (`web/static/js/render.js`)
+  - [x] Market Sentiment Score 표시
+  - [x] Top Inflows 리스트 렌더링
+  - [x] Top Outflows 리스트 렌더링
+  - [x] AI 분석 텍스트 표시
+- [x] `renderUSCalendar(data)` (`web/static/js/render.js`)
+  - [x] 경제 캘린더 렌더링
+  - [x] 날짜별 그룹화
+  - [x] Impact 레벨 표시 (High/Medium/Low)
+  - [x] 이벤트 설명 표시
 
 #### 6.5 차트 관련 함수
 
