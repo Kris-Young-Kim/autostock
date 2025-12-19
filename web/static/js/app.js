@@ -713,6 +713,477 @@ window.updateRealtimePrices = async function () {
   }
 };
 
+/**
+ * Chart-related functions
+ */
+
+// Store indicator series references
+window.indicatorSeries = {
+  rsi: null,
+  macd: null,
+  macdSignal: null,
+  macdHistogram: null,
+  bbUpper: null,
+  bbMiddle: null,
+  bbLower: null,
+  supportResistance: [],
+};
+
+// Store indicator data cache
+window.indicatorDataCache = {};
+
+/**
+ * Load US stock chart
+ * @param {Object} pick - Stock pick object with ticker, name, score, etc.
+ * @param {number} idx - Index of the pick (optional)
+ * @param {string} period - Chart period (1M, 3M, 6M, 1Y, 2Y, 5Y)
+ */
+window.loadUSStockChart = async function (pick, idx, period) {
+  if (!pick || !pick.ticker) {
+    console.error("Invalid pick data:", pick);
+    return;
+  }
+
+  const ticker = pick.ticker;
+  const usePeriod = period || window.currentChartPeriod || "6M";
+  const chartContainer = document.getElementById("chart-container");
+
+  if (!chartContainer) {
+    console.error("Chart container not found");
+    return;
+  }
+
+  try {
+    // Update UI: highlight selected row
+    const tableBody = document.getElementById("picks-table-body");
+    if (tableBody) {
+      tableBody.querySelectorAll("tr").forEach((row) => {
+        row.classList.remove("bg-tertiary", "border-accent-blue");
+      });
+      const selectedRow = tableBody.querySelector(
+        `tr[data-ticker="${ticker}"]`
+      );
+      if (selectedRow) {
+        selectedRow.classList.add("bg-tertiary", "border-accent-blue");
+      }
+    }
+
+    // Update chart header (using existing chart-ticker element)
+    const chartTicker = document.getElementById("chart-ticker");
+    if (chartTicker) {
+      chartTicker.textContent = `${ticker} - ${pick.name || ticker}${pick.score ? ` (Score: ${pick.score})` : ""}`;
+    }
+
+    // Show loading state
+    chartContainer.innerHTML =
+      '<div class="flex items-center justify-center h-full text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div>';
+
+    // Fetch chart data
+    const params = new URLSearchParams({ period: usePeriod });
+    const response = await fetchAPI(
+      `/api/us/stock-chart/${ticker}?${params.toString()}`
+    );
+
+    if (response.error) {
+      chartContainer.innerHTML = `<div class="flex items-center justify-center h-full text-gray-500">${response.error}</div>`;
+      return;
+    }
+
+    // Clear container
+    chartContainer.innerHTML = "";
+
+    // Destroy existing chart if present
+    if (window.usStockChart && typeof window.usStockChart.remove === "function") {
+      window.usStockChart.remove();
+      window.usStockChart = null;
+    }
+
+    // Clear indicator series references
+    Object.keys(window.indicatorSeries).forEach((key) => {
+      if (Array.isArray(window.indicatorSeries[key])) {
+        window.indicatorSeries[key] = [];
+      } else {
+        window.indicatorSeries[key] = null;
+      }
+    });
+
+    // Create new chart instance
+    window.usStockChart = LightweightCharts.createChart(chartContainer, {
+      width: chartContainer.clientWidth,
+      height: chartContainer.clientHeight || 384,
+      layout: {
+        background: { color: "#1a1a1a" },
+        textColor: "#999",
+      },
+      grid: {
+        vertLines: { color: "#2a2a2a" },
+        horzLines: { color: "#2a2a2a" },
+      },
+      timeScale: {
+        borderColor: "#2a2a2a",
+        timeVisible: true,
+        rightOffset: 5,
+        fixLeftEdge: false,
+        fixRightEdge: false,
+      },
+      rightPriceScale: {
+        borderColor: "#2a2a2a",
+      },
+      handleScroll: {
+        mouseWheel: true,
+        pressedMouseMove: true,
+      },
+      handleScale: {
+        axisPressedMouseMove: true,
+        mouseWheel: true,
+        pinch: true,
+      },
+    });
+
+    // Add candlestick series
+    const candleSeries = window.usStockChart.addCandlestickSeries({
+      upColor: "#22c55e",
+      downColor: "#ef4444",
+      borderUpColor: "#22c55e",
+      borderDownColor: "#ef4444",
+      wickUpColor: "#22c55e",
+      wickDownColor: "#ef4444",
+    });
+
+    // Set candle data
+    if (response.candles && response.candles.length > 0) {
+      candleSeries.setData(response.candles);
+      window.usStockChart.timeScale().fitContent();
+    }
+
+    // Store current chart pick
+    window.currentChartPick = pick;
+
+    // Re-apply active indicators
+    const activeIndicators = Object.keys(window.indicatorState).filter(
+      (key) => window.indicatorState[key]
+    );
+    if (activeIndicators.length > 0) {
+      // Fetch indicator data and render
+      for (const indicator of activeIndicators) {
+        await toggleIndicator(indicator, true); // true = skip toggle, just render
+      }
+    }
+
+    // Load AI summary
+    if (typeof loadUSAISummary === "function") {
+      loadUSAISummary(ticker);
+    }
+
+    console.log(`✅ Chart loaded for ${ticker} (${usePeriod})`);
+  } catch (error) {
+    logError("Chart loading", error);
+    if (chartContainer) {
+      chartContainer.innerHTML = `<div class="flex items-center justify-center h-full text-red-500">Error loading chart: ${error.message}</div>`;
+    }
+  }
+};
+
+/**
+ * Load AI summary for a ticker
+ * @param {string} ticker - Stock ticker
+ */
+window.loadUSAISummary = async function (ticker) {
+  const summaryContainer = document.getElementById("ai-summary-content");
+  if (!summaryContainer) return;
+
+  try {
+    summaryContainer.innerHTML =
+      '<div class="flex items-center justify-center py-4"><i class="fas fa-spinner fa-spin text-gray-500"></i></div>';
+
+    const params = new URLSearchParams({ lang: window.currentLang });
+    const response = await fetchAPI(`/api/us/ai-summary/${ticker}?${params.toString()}`);
+
+    if (response.error) {
+      summaryContainer.innerHTML = `<div class="text-sm text-gray-500">${response.error}</div>`;
+      return;
+    }
+
+    // Format summary text with line breaks
+    const summaryText = response.summary
+      ? response.summary.replace(/\n/g, "<br>")
+      : "No summary available";
+
+    summaryContainer.innerHTML = `<div class="text-sm text-gray-300 leading-relaxed">${summaryText}</div>`;
+
+    // Update summary language toggle
+    const summaryLangToggle = document.getElementById("summary-lang-toggle");
+    const summaryLang = document.getElementById("summary-lang");
+    if (summaryLangToggle && summaryLang) {
+      summaryLangToggle.onclick = async function () {
+        window.currentLang = window.currentLang === "ko" ? "en" : "ko";
+        await loadUSAISummary(ticker);
+      };
+      summaryLang.textContent = window.currentLang.toUpperCase();
+    }
+  } catch (error) {
+    logError("AI Summary loading", error);
+    summaryContainer.innerHTML = `<div class="text-sm text-red-500">Error loading summary</div>`;
+  }
+};
+
+/**
+ * Toggle technical indicator
+ * @param {string} type - Indicator type (rsi, macd, bb, sr)
+ * @param {boolean} skipToggle - If true, skip toggle logic and just render
+ */
+window.toggleIndicator = async function (type, skipToggle = false) {
+  if (!window.usStockChart || !window.currentChartPick) {
+    console.warn("No chart loaded");
+    return;
+  }
+
+  const ticker = window.currentChartPick.ticker;
+
+  // Toggle state (unless skipToggle is true)
+  if (!skipToggle) {
+    window.indicatorState[type] = !window.indicatorState[type];
+  }
+
+  // Update button styling
+  const button = document.querySelector(
+    `.indicator-toggle[data-indicator="${type}"]`
+  );
+  if (button) {
+    if (window.indicatorState[type]) {
+      button.classList.add("bg-accent-blue", "text-white");
+      button.classList.remove("bg-tertiary");
+    } else {
+      button.classList.remove("bg-accent-blue", "text-white");
+      button.classList.add("bg-tertiary");
+    }
+  }
+
+  // If indicator is now inactive, remove it
+  if (!window.indicatorState[type]) {
+    renderIndicator(type, null);
+    return;
+  }
+
+  // Fetch indicator data if not cached
+  if (!window.indicatorDataCache[ticker]) {
+    try {
+      const response = await fetchAPI(
+        `/api/us/technical-indicators/${ticker}`
+      );
+      if (response.error) {
+        console.error("Error fetching indicators:", response.error);
+        return;
+      }
+      window.indicatorDataCache[ticker] = response;
+    } catch (error) {
+      logError("Indicator data fetch", error);
+      return;
+    }
+  }
+
+  const indicatorData = window.indicatorDataCache[ticker];
+  renderIndicator(type, indicatorData);
+};
+
+/**
+ * Render technical indicator on chart
+ * @param {string} type - Indicator type (rsi, macd, bb, sr)
+ * @param {Object} data - Indicator data from API
+ */
+window.renderIndicator = function (type, data) {
+  if (!window.usStockChart) return;
+
+  switch (type) {
+    case "rsi":
+      renderRSI(data);
+      break;
+    case "macd":
+      renderMACD(data);
+      break;
+    case "bb":
+      renderBollingerBands(data);
+      break;
+    case "sr":
+      renderSupportResistance(data);
+      break;
+    default:
+      console.warn(`Unknown indicator type: ${type}`);
+  }
+};
+
+/**
+ * Render RSI indicator
+ * @param {Object} data - Indicator data
+ */
+function renderRSI(data) {
+  if (!data || !data.rsi) return;
+
+  // RSI is typically displayed as a separate pane or overlay
+  // For simplicity, we'll show it as a line series on the main chart
+  // In a production app, you might want a separate pane
+
+  // Remove existing RSI series
+  if (window.indicatorSeries.rsi) {
+    window.usStockChart.removeSeries(window.indicatorSeries.rsi);
+    window.indicatorSeries.rsi = null;
+  }
+
+  // Note: RSI requires historical calculation, which we don't have in the current API response
+  // This is a placeholder - you would need to calculate RSI for each candle
+  console.log(`RSI: ${data.rsi}`);
+  // TODO: Implement RSI line series if historical RSI data is available
+}
+
+/**
+ * Render MACD indicator
+ * @param {Object} data - Indicator data
+ */
+function renderMACD(data) {
+  if (!data || !data.macd) return;
+
+  // MACD requires historical data for each candle
+  // Current API only returns current values
+  // This is a placeholder
+  console.log(`MACD: ${JSON.stringify(data.macd)}`);
+  // TODO: Implement MACD series if historical MACD data is available
+}
+
+/**
+ * Render Bollinger Bands
+ * @param {Object} data - Indicator data
+ */
+function renderBollingerBands(data) {
+  if (!data || !data.bollinger_bands) return;
+
+  const bb = data.bollinger_bands;
+
+  // Remove existing BB series
+  if (window.indicatorSeries.bbUpper) {
+    window.usStockChart.removeSeries(window.indicatorSeries.bbUpper);
+    window.usStockChart.removeSeries(window.indicatorSeries.bbMiddle);
+    window.usStockChart.removeSeries(window.indicatorSeries.bbLower);
+    window.indicatorSeries.bbUpper = null;
+    window.indicatorSeries.bbMiddle = null;
+    window.indicatorSeries.bbLower = null;
+  }
+
+  // Get current time from chart
+  const timeScale = window.usStockChart.timeScale();
+  const visibleRange = timeScale.getVisibleRange();
+  if (!visibleRange) return;
+
+  // Create horizontal lines for current BB levels
+  // Note: This shows current levels only. For full BB bands, you'd need historical data
+  const currentTime = visibleRange.to;
+
+  // Upper band
+  window.indicatorSeries.bbUpper = window.usStockChart.addLineSeries({
+    color: "#3b82f6",
+    lineWidth: 1,
+    lineStyle: 2, // Dashed
+    title: "BB Upper",
+  });
+  window.indicatorSeries.bbUpper.setData([
+    { time: visibleRange.from, value: bb.upper },
+    { time: currentTime, value: bb.upper },
+  ]);
+
+  // Middle band (SMA)
+  window.indicatorSeries.bbMiddle = window.usStockChart.addLineSeries({
+    color: "#f59e0b",
+    lineWidth: 1,
+    lineStyle: 0, // Solid
+    title: "BB Middle",
+  });
+  window.indicatorSeries.bbMiddle.setData([
+    { time: visibleRange.from, value: bb.middle },
+    { time: currentTime, value: bb.middle },
+  ]);
+
+  // Lower band
+  window.indicatorSeries.bbLower = window.usStockChart.addLineSeries({
+    color: "#3b82f6",
+    lineWidth: 1,
+    lineStyle: 2, // Dashed
+    title: "BB Lower",
+  });
+  window.indicatorSeries.bbLower.setData([
+    { time: visibleRange.from, value: bb.lower },
+    { time: currentTime, value: bb.lower },
+  ]);
+}
+
+/**
+ * Render Support/Resistance levels
+ * @param {Object} data - Indicator data
+ */
+function renderSupportResistance(data) {
+  if (!data || !data.support_resistance) return;
+
+  const sr = data.support_resistance;
+
+  // Remove existing S/R lines
+  window.indicatorSeries.supportResistance.forEach((series) => {
+    if (series) {
+      window.usStockChart.removeSeries(series);
+    }
+  });
+  window.indicatorSeries.supportResistance = [];
+
+  // Get visible time range
+  const timeScale = window.usStockChart.timeScale();
+  const visibleRange = timeScale.getVisibleRange();
+  if (!visibleRange) return;
+
+  const currentTime = visibleRange.to;
+
+  // Render resistance levels (red)
+  sr.resistance_levels.forEach((level, idx) => {
+    const series = window.usStockChart.addLineSeries({
+      color: "#ef4444",
+      lineWidth: 1,
+      lineStyle: 2, // Dashed
+      title: `Resistance ${idx + 1}`,
+    });
+    series.setData([
+      { time: visibleRange.from, value: level },
+      { time: currentTime, value: level },
+    ]);
+    window.indicatorSeries.supportResistance.push(series);
+  });
+
+  // Render support levels (green)
+  sr.support_levels.forEach((level, idx) => {
+    const series = window.usStockChart.addLineSeries({
+      color: "#22c55e",
+      lineWidth: 1,
+      lineStyle: 2, // Dashed
+      title: `Support ${idx + 1}`,
+    });
+    series.setData([
+      { time: visibleRange.from, value: level },
+      { time: currentTime, value: level },
+    ]);
+    window.indicatorSeries.supportResistance.push(series);
+  });
+}
+
+/**
+ * Update chart's last candle with real-time price
+ * @param {Object} priceData - Real-time price data
+ */
+window.updateChartLastCandle = function (priceData) {
+  if (!window.usStockChart || !priceData) return;
+
+  // This function would update the last candle with new price data
+  // Lightweight Charts doesn't have a direct method to update a single candle
+  // You would need to get all candles, update the last one, and setData again
+  // For now, this is a placeholder
+  console.debug(`Updating chart candle for ${priceData.ticker}: $${priceData.price}`);
+  // TODO: Implement real-time candle update if needed
+};
+
 // Initialize on DOM ready
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", window.initApp);

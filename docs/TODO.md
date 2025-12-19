@@ -562,17 +562,17 @@ bash bin/run_server.sh
 
 #### 6.5 차트 관련 함수
 
-- [ ] `loadUSStockChart(pick, idx, period)`
-  - [ ] 차트 데이터 페칭
-  - [ ] Lightweight Charts 인스턴스 생성
-  - [ ] 캔들스틱 시리즈 추가
-  - [ ] AI 요약 로드
-- [ ] `toggleIndicator(type)`
-  - [ ] 기술적 지표 토글
-  - [ ] 지표 데이터 페칭
-  - [ ] 차트에 시리즈 추가/제거
-- [ ] `renderIndicator(type, data)`
-  - [ ] RSI, MACD, BB, S/R 렌더링
+- [x] `loadUSStockChart(pick, idx, period)`
+  - [x] 차트 데이터 페칭
+  - [x] Lightweight Charts 인스턴스 생성
+  - [x] 캔들스틱 시리즈 추가
+  - [x] AI 요약 로드
+- [x] `toggleIndicator(type)`
+  - [x] 기술적 지표 토글
+  - [x] 지표 데이터 페칭
+  - [x] 차트에 시리즈 추가/제거
+- [x] `renderIndicator(type, data)`
+  - [x] RSI, MACD, BB, S/R 렌더링
 
 #### 6.6 유틸리티 함수
 

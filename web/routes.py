@@ -271,17 +271,32 @@ def register_routes(app: Flask, get_sector_func, calculate_rsi_func, analyze_tre
     def get_us_stock_chart(ticker):
         """Get US stock chart data (OHLC) for candlestick chart"""
         try:
+            # Get period from query params (default: 6mo)
+            period = request.args.get('period', '6mo')
+            valid_periods = ['1mo', '3mo', '6mo', '1y', '2y', '5y', 'max']
+            # Map frontend period format (1M, 3M, 6M, 1Y, 2Y, 5Y) to yfinance format
+            period_map = {
+                '1M': '1mo', '3M': '3mo', '6M': '6mo',
+                '1Y': '1y', '2Y': '2y', '5Y': '5y'
+            }
+            if period in period_map:
+                period = period_map[period]
+            if period not in valid_periods:
+                period = '6mo'
+            
             stock = yf.Ticker(ticker)
-            hist = stock.history(period='3mo')
+            hist = stock.history(period=period)
             
             if hist.empty:
                 return jsonify({'error': 'No data available'}), 404
             
-            # Format for chart
-            chart_data = []
+            # Format for Lightweight Charts (requires timestamp in seconds)
+            candles = []
             for date, row in hist.iterrows():
-                chart_data.append({
-                    'time': date.strftime('%Y-%m-%d'),
+                # Convert date to timestamp (seconds since epoch)
+                timestamp = int(date.timestamp())
+                candles.append({
+                    'time': timestamp,
                     'open': round(float(row['Open']), 2),
                     'high': round(float(row['High']), 2),
                     'low': round(float(row['Low']), 2),
@@ -291,7 +306,8 @@ def register_routes(app: Flask, get_sector_func, calculate_rsi_func, analyze_tre
             
             return jsonify({
                 'ticker': ticker,
-                'data': chart_data
+                'period': period,
+                'candles': candles
             })
         except Exception as e:
             logger.error(f"Error in /api/us/stock-chart/{ticker}: {e}")
