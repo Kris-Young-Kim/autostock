@@ -311,37 +311,37 @@ python pipeline/update_all.py  # 전체 파이프라인 실행
 
 #### 4.3 US Market API 엔드포인트 구현
 
-- [ ] `/api/us/portfolio` - 시장 지수 데이터
-  - [ ] Dow Jones, S&P 500, NASDAQ, VIX 등
-  - [ ] 실시간 가격 및 변동률 계산
-- [ ] `/api/us/smart-money` - Smart Money Picks
-  - [ ] `smart_money_current.json` 또는 CSV 로드
-  - [ ] 실시간 가격 업데이트
-  - [ ] Performance 계산 (추천 시점 대비 수익률)
-- [ ] `/api/us/etf-flows` - ETF 자금 흐름
-  - [ ] `us_etf_flows.csv` 로드
-  - [ ] AI 분석 텍스트 포함
-- [ ] `/api/us/stock-chart/<ticker>` - 차트 데이터
-  - [ ] yfinance를 통한 OHLC 데이터
-  - [ ] Lightweight Charts 형식으로 변환
-- [ ] `/api/us/macro-analysis` - 매크로 분석
-  - [ ] `macro_analysis.json` 로드
-  - [ ] 언어/모델 선택 지원 (`lang`, `model` 파라미터)
-  - [ ] 주요 지표 실시간 업데이트
-- [ ] `/api/us/sector-heatmap` - 섹터 히트맵
-  - [ ] `sector_heatmap.json` 로드
-- [ ] `/api/us/options-flow` - 옵션 플로우
-  - [ ] `options_flow.json` 로드
-- [ ] `/api/us/ai-summary/<ticker>` - AI 요약
-  - [ ] `ai_summaries.json`에서 특정 종목 요약 반환
-  - [ ] 언어 선택 지원
-- [ ] `/api/us/technical-indicators/<ticker>` - 기술적 지표
-  - [ ] RSI, MACD, Bollinger Bands 계산
-  - [ ] Support/Resistance 레벨 탐지
-- [ ] `/api/us/calendar` - 경제 캘린더
-  - [ ] `weekly_calendar.json` 로드
-- [ ] `/api/us/history-dates` - 과거 분석 날짜 목록
-- [ ] `/api/us/history/<date>` - 특정 날짜 분석 결과
+- [x] `/api/us/portfolio` - 시장 지수 데이터
+  - [x] Dow Jones, S&P 500, NASDAQ, VIX 등
+  - [x] 실시간 가격 및 변동률 계산
+- [x] `/api/us/smart-money` - Smart Money Picks
+  - [x] `smart_money_current.json` 또는 CSV 로드
+  - [x] 실시간 가격 업데이트
+  - [x] Performance 계산 (추천 시점 대비 수익률)
+- [x] `/api/us/etf-flows` - ETF 자금 흐름
+  - [x] `us_etf_flows.csv` 로드
+  - [x] AI 분석 텍스트 포함
+- [x] `/api/us/stock-chart/<ticker>` - 차트 데이터
+  - [x] yfinance를 통한 OHLC 데이터
+  - [x] Lightweight Charts 형식으로 변환
+- [x] `/api/us/macro-analysis` - 매크로 분석
+  - [x] `macro_analysis.json` 로드
+  - [x] 언어/모델 선택 지원 (`lang`, `model` 파라미터)
+  - [x] 주요 지표 실시간 업데이트
+- [x] `/api/us/sector-heatmap` - 섹터 히트맵
+  - [x] `sector_heatmap.json` 로드
+- [x] `/api/us/options-flow` - 옵션 플로우
+  - [x] `options_flow.json` 로드
+- [x] `/api/us/ai-summary/<ticker>` - AI 요약
+  - [x] `ai_summaries.json`에서 특정 종목 요약 반환
+  - [x] 언어 선택 지원
+- [x] `/api/us/technical-indicators/<ticker>` - 기술적 지표
+  - [x] RSI, MACD, Bollinger Bands 계산
+  - [x] Support/Resistance 레벨 탐지
+- [x] `/api/us/calendar` - 경제 캘린더
+  - [x] `weekly_calendar.json` 로드
+- [x] `/api/us/history-dates` - 과거 분석 날짜 목록
+- [x] `/api/us/history/<date>` - 특정 날짜 분석 결과
 
 #### 4.4 실시간 가격 업데이트 API
 

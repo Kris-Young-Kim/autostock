@@ -31,9 +31,6 @@ logger = setup_logging('server.log')
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False  # Support Korean characters
 
-# Import routes after app initialization
-from web.routes import *
-
 # Sector mapping for major US stocks (S&P 500 + popular stocks)
 SECTOR_MAP = {
     # Technology
@@ -211,6 +208,11 @@ def analyze_trend(prices: pd.Series) -> dict:
 def index():
     """Main dashboard page"""
     return render_template('index.html')
+
+
+# Register routes after app and utility functions are defined
+from web.routes import register_routes
+register_routes(app, get_sector, calculate_rsi, analyze_trend)
 
 
 if __name__ == '__main__':
