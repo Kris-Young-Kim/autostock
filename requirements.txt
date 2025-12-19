@@ -1,0 +1,13 @@
+pandas
+numpy
+yfinance
+tqdm
+requests
+python-dotenv
+google-generativeai
+openai
+flask
+ta
+seaborn
+matplotlib
+
