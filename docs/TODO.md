@@ -352,15 +352,11 @@ python pipeline/update_all.py  # 전체 파이프라인 실행
 
 #### 4.5 서버 실행 설정
 
-- [ ] `web/app.py` 메인 실행 블록
-  - [ ] Port 3000 설정
-  - [ ] Debug 모드 설정
-- [ ] `bin/run_server.sh` 생성
-  ```bash
-  #!/bin/bash
-  cd "$(dirname "$0")/.."
-  python web/app.py
-  ```
+- [x] `web/app.py` 메인 실행 블록
+  - [x] Port 3000 설정 (core/config.py에서 PORT 환경변수로 설정)
+  - [x] Debug 모드 설정 (FLASK_ENV 환경변수로 제어)
+- [x] `bin/run_server.sh` 생성 (Linux/Mac용)
+- [x] `bin/run_server.bat` 생성 (Windows용)
 
 **검증:**
 

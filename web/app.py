@@ -217,4 +217,6 @@ register_routes(app, get_sector, calculate_rsi, analyze_trend)
 
 if __name__ == '__main__':
     logger.info(f"🚀 Starting Flask server on port {PORT}")
+    logger.info(f"📝 Environment: {FLASK_ENV}")
+    logger.info(f"🐛 Debug mode: {FLASK_ENV == 'development'}")
     app.run(host='0.0.0.0', port=PORT, debug=(FLASK_ENV == 'development'))
