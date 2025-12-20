@@ -220,7 +220,12 @@ def analyze_trend(prices: pd.Series) -> dict:
 
 
 @app.route('/')
-def index():
+def landing():
+    """Landing page"""
+    return render_template('landing.html')
+
+@app.route('/dashboard')
+def dashboard():
     """Main dashboard page"""
     return render_template('index.html')
 

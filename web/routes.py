@@ -13,6 +13,7 @@ from core.config import (
     ETF_FLOW_ANALYSIS_FILE,
     SECTOR_HEATMAP_FILE,
     OPTIONS_FLOW_FILE,
+    PORTFOLIO_RISK_FILE,
     MACRO_ANALYSIS_FILE,
     MACRO_ANALYSIS_EN_FILE,
     WEEKLY_CALENDAR_FILE,
@@ -204,6 +205,21 @@ def register_routes(app: Flask, get_sector_func, calculate_rsi_func, analyze_tre
             return jsonify(data)
         except Exception as e:
             logger.error(f"Error in /api/us/options-flow: {e}")
+            return jsonify({'error': str(e)}), 500
+
+    @app.route('/api/us/portfolio-risk')
+    def get_us_portfolio_risk():
+        """Get Portfolio Risk Analysis Data"""
+        try:
+            if not PORTFOLIO_RISK_FILE.exists():
+                return jsonify({'error': 'Portfolio risk data not found'}), 404
+            
+            with open(PORTFOLIO_RISK_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            return jsonify(data)
+        except Exception as e:
+            logger.error(f"Error in /api/us/portfolio-risk: {e}")
             return jsonify({'error': str(e)}), 500
 
     @app.route('/api/us/macro')

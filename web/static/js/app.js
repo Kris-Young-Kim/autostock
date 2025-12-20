@@ -37,20 +37,66 @@ window.macroAnalysisInterval = null;
 // API base URL
 window.API_BASE = "";
 
+// Sector translations
+window.sectorTranslations = {
+  ko: {
+    'Tech': '기술',
+    'Health': '헬스케어',
+    'Finance': '금융',
+    'Consumer': '소비재',
+    'Cons': '소비재',
+    'Industrial': '산업',
+    'Indust': '산업',
+    'Energy': '에너지',
+    'Materials': '소재',
+    'Mater': '소재',
+    'Real Estate': '부동산',
+    'Utilities': '유틸리티',
+    'Telecom': '통신',
+    'Unknown': '알 수 없음'
+  },
+  en: {
+    'Tech': 'Technology',
+    'Health': 'Healthcare',
+    'Finance': 'Financial',
+    'Consumer': 'Consumer',
+    'Cons': 'Consumer',
+    'Industrial': 'Industrial',
+    'Indust': 'Industrial',
+    'Energy': 'Energy',
+    'Materials': 'Materials',
+    'Mater': 'Materials',
+    'Real Estate': 'Real Estate',
+    'Utilities': 'Utilities',
+    'Telecom': 'Telecommunications',
+    'Unknown': 'Unknown'
+  }
+};
+
 // i18n translations
 window.i18n = {
   ko: {
     dashboard: "대시보드",
-    smartMoney: "Smart Money Picks",
+    smartMoney: "스마트 머니 추천",
     macro: "매크로 분석",
     etfFlows: "ETF 자금 흐름",
     calendar: "경제 캘린더",
+    calendarTab: "캘린더",
     portfolio: "포트폴리오",
+    portfolioComingSoon: "포트폴리오 기능은 곧 출시됩니다",
+    portfolioDescription: "보유 종목 관리 및 성과 추적 기능을 준비 중입니다",
+    optionsFlowComingSoon: "옵션 흐름 분석 기능은 곧 출시됩니다",
+    optionsFlowDescription: "주요 종목의 옵션 체인 데이터 및 비정상 거래 감지 기능을 준비 중입니다",
+    insiderComingSoon: "내부자 거래 추적 기능은 곧 출시됩니다",
+    insiderDescription: "기업 임원 및 내부자의 매수/매도 활동 추적 기능을 준비 중입니다",
+    riskComingSoon: "리스크 분석 기능은 곧 출시됩니다",
+    riskDescription: "포트폴리오 변동성, 상관관계, 베타 분석 기능을 준비 중입니다",
     marketOverview: "시장 개요",
+    marketIndices: "시장 지수",
     analysis: "분석",
     sectors: "섹터",
     lastUpdate: "마지막 업데이트",
-    dataSource: "데이터 소스",
+    dataSource: "데이터 출처",
     aiModel: "AI 모델",
     language: "언어",
     realTime: "실시간",
@@ -59,6 +105,18 @@ window.i18n = {
     aiSummary: "AI 요약",
     macroAnalysis: "매크로 분석",
     economicCalendar: "경제 캘린더",
+    advanced: "고급 기능",
+    optionsFlow: "옵션 흐름",
+    insiderActivity: "내부자 거래",
+    riskAnalysis: "리스크 분석",
+    rank: "순위",
+    ticker: "티커",
+    name: "종목명",
+    score: "점수",
+    price: "가격",
+    change: "변동",
+    sector: "섹터",
+    selectAIModel: "AI 모델 선택",
     loading: "로딩 중...",
     error: "오류",
     noData: "데이터 없음",
@@ -75,8 +133,18 @@ window.i18n = {
     macro: "Macro Analysis",
     etfFlows: "ETF Flows",
     calendar: "Economic Calendar",
+    calendarTab: "Calendar",
     portfolio: "Portfolio",
+    portfolioComingSoon: "Portfolio feature coming soon",
+    portfolioDescription: "Portfolio management and performance tracking features are under development",
+    optionsFlowComingSoon: "Options flow analysis feature coming soon",
+    optionsFlowDescription: "Options chain data and unusual activity detection features are under development",
+    insiderComingSoon: "Insider activity tracking feature coming soon",
+    insiderDescription: "Corporate executive and insider buy/sell activity tracking features are under development",
+    riskComingSoon: "Risk analysis feature coming soon",
+    riskDescription: "Portfolio volatility, correlation, and beta analysis features are under development",
     marketOverview: "Market Overview",
+    marketIndices: "Market Indices",
     analysis: "Analysis",
     sectors: "Sectors",
     lastUpdate: "Last Update",
@@ -89,6 +157,18 @@ window.i18n = {
     aiSummary: "AI Summary",
     macroAnalysis: "Macro Analysis",
     economicCalendar: "Economic Calendar",
+    advanced: "Advanced",
+    optionsFlow: "Options Flow",
+    insiderActivity: "Insider Activity",
+    riskAnalysis: "Risk Analysis",
+    rank: "Rank",
+    ticker: "Ticker",
+    name: "Name",
+    score: "Score",
+    price: "Price",
+    change: "Change",
+    sector: "Sector",
+    selectAIModel: "Select AI Model",
     loading: "Loading...",
     error: "Error",
     noData: "No Data",
@@ -117,7 +197,14 @@ window.saveState = function () {
  * Load state from localStorage
  */
 window.loadState = function () {
-  window.currentLang = localStorage.getItem("appLang") || "ko";
+  // Force Korean as default for Korean market launch
+  const storedLang = localStorage.getItem("appLang");
+  window.currentLang = storedLang || "ko";
+  // Reset to Korean if no preference is stored (for Korean market)
+  if (!storedLang) {
+    window.currentLang = "ko";
+    localStorage.setItem("appLang", "ko");
+  }
   window.currentModel = localStorage.getItem("appModel") || "gemini";
 };
 
@@ -151,6 +238,157 @@ window.getColorClass = function (value) {
 };
 
 /**
+ * Translate sector name to Korean
+ */
+window.translateSector = function (sector) {
+  if (!sector) return "알 수 없음";
+  const lang = window.currentLang || "ko";
+  const translations = window.sectorTranslations[lang] || window.sectorTranslations.ko;
+  return translations[sector] || sector;
+};
+
+/**
+ * Translate stock name to Korean (if available)
+ * For now, returns English name, but can be extended with a translation map
+ */
+window.translateStockName = function (name, ticker) {
+  const lang = window.currentLang || "ko";
+  
+  // If Korean is selected, try to get Korean name from API or use English
+  // For now, we'll keep English names but can add translation map later
+  if (lang === "ko") {
+    // Common stock name translations (can be extended)
+    const stockNameMap = {
+      'AAPL': '애플',
+      'MSFT': '마이크로소프트',
+      'GOOGL': '구글',
+      'AMZN': '아마존',
+      'TSLA': '테슬라',
+      'META': '메타',
+      'NVDA': '엔비디아',
+      'JPM': 'JP모건',
+      'V': '비자',
+      'JNJ': '존슨앤존슨',
+      'WMT': '월마트',
+      'PG': '프록터앤갬블',
+      'MA': '마스터카드',
+      'DIS': '월트디즈니',
+      'NFLX': '넷플릭스',
+      'AMD': 'AMD',
+      'INTC': '인텔',
+      'CSCO': '시스코',
+      'PEP': '펩시',
+      'KO': '코카콜라',
+      'NKE': '나이키',
+      'BA': '보잉',
+      'CAT': '캐터필러',
+      'GE': '제너럴일렉트릭',
+      'IBM': 'IBM',
+      'XOM': '엑슨모빌',
+      'CVX': '셰브론',
+      'BAC': '뱅크오브아메리카',
+      'GS': '골드만삭스',
+      'C': '시티그룹',
+      'WFC': '웰스파고',
+      'AXP': '아메리칸익스프레스',
+      'HD': '홈디포',
+      'LOW': '로우스',
+      'TGT': '타겟',
+      'COST': '코스트코',
+      'SBUX': '스타벅스',
+      'MCD': '맥도날드',
+      'NKE': '나이키',
+      'ADBE': '어도비',
+      'CRM': '세일즈포스',
+      'ORCL': '오라클',
+      'INTU': '인투이트',
+      'NOW': '서비스나우',
+      'SHOP': '샵ify',
+      'SQ': '스퀘어',
+      'PYPL': '페이팔',
+      'ZM': '줌',
+      'DOCU': '도큐사인',
+      'SPOT': '스포티파이',
+      'UBER': '우버',
+      'LYFT': '리프트',
+      'ABNB': '에어비앤비',
+      'DASH': '도어대시',
+      'GRUB': '그럽허브',
+      'ETSY': '이츠이',
+      'PINS': '핀터레스트',
+      'SNAP': '스냅',
+      'TWTR': '트위터',
+      'ROKU': '로쿠',
+      'FUBO': '푸보TV',
+      'PLTR': '팔란티어',
+      'SNOW': '스노우플레이크',
+      'DDOG': '데이터독',
+      'NET': '클라우드플레어',
+      'CRWD': '크라우드스트라이크',
+      'ZS': '줄로스케일',
+      'OKTA': '옥타',
+      'FTNT': '포트넷',
+      'PANW': '팔로알토',
+      'CHKP': '체크포인트',
+      'QLYS': '퀄리스',
+      'TENB': '테나블',
+      'VRNS': '바란스',
+      'RPD': '래피드7',
+      'ESTC': '엘라스틱',
+      'MIME': '마임캐스트',
+      'VEEV': '비브',
+      'TEAM': '아틀라시안',
+      'ZM': '줌',
+      'DOCN': '디지털오션',
+      'NET': '클라우드플레어',
+      'AKAM': '아카마이',
+      'FFIV': 'F5',
+      'JNPR': '주니퍼',
+      'ANET': '아리스타',
+      'ARRS': '아루바',
+      'CIEN': '시에나',
+      'COMM': '코뮤스코프',
+      'EXTR': '익스트림',
+      'INFN': '인피논',
+      'LITE': '라이트',
+      'MRVL': '마벨',
+      'NTNX': '누타닉스',
+      'QLYS': '퀄리스',
+      'RDWR': '라드웨어',
+      'RVBD': '리버베드',
+      'SCWX': '시큐어웍스',
+      'SPLK': '스플렁크',
+      'TUFN': '투판',
+      'VEEV': '비브',
+      'VRNS': '바란스',
+      'WDAY': '워크데이',
+      'ZEN': '젠데스크',
+      'ZUO': '주오라',
+      'ELV': '엘레반스 헬스',
+      'MU': '마이크론 테크놀로지',
+      'DECK': '데커스 아웃도어',
+      'BALL': '볼 코퍼레이션',
+      'JBL': '자빌',
+      'NEM': '뉴몬트',
+      'CTSH': '코그니잔트',
+      'ADBE': '어도비',
+      'TXT': '텍스트론',
+      'STLD': '스틸 다이나믹스'
+    };
+    
+    // Check if we have a Korean translation
+    if (stockNameMap[ticker]) {
+      return stockNameMap[ticker];
+    }
+    
+    // If no translation, return English name
+    return name;
+  }
+  
+  return name;
+};
+
+/**
  * Translate UI elements
  */
 window.translateUI = function () {
@@ -164,6 +402,14 @@ window.translateUI = function () {
       el.textContent = window.i18n[window.currentLang][key];
     }
   });
+  
+  // Also update placeholder text
+  const searchInput = document.getElementById("search-input");
+  if (searchInput) {
+    searchInput.placeholder = window.currentLang === "ko" 
+      ? "티커 또는 회사명 검색..." 
+      : "Search ticker or company name...";
+  }
 };
 
 /**
@@ -396,6 +642,9 @@ window.initApp = function () {
   // Update UI with loaded state
   updateUIState();
 
+  // Translate UI immediately after state is loaded
+  translateUI();
+
   // Register event listeners
   registerEventListeners();
 
@@ -415,6 +664,10 @@ window.initApp = function () {
       // Don't show toast for macro analysis errors on init (it's not critical)
     });
   }
+
+  // Load options flow and risk analysis data
+  loadOptionsFlow();
+  loadRiskAnalysis();
 
   // Set up real-time update intervals
   setupUpdateIntervals();
@@ -446,8 +699,7 @@ window.updateUIState = function () {
   }
 
   // Update footer AI model display
-  const footerModel = document.querySelector('#fnb span:contains("Gemini")');
-  // Note: This is a placeholder, actual implementation depends on footer structure
+  // Note: Footer model display is handled by footer structure, no need for separate update
 };
 
 /**
@@ -570,14 +822,17 @@ window.registerEventListeners = function () {
   const langToggle = document.getElementById("lang-toggle");
   if (langToggle) {
     langToggle.addEventListener("click", function () {
+      // Toggle between ko and en
       window.currentLang = window.currentLang === "ko" ? "en" : "ko";
       saveState();
 
       // Update UI
       const langText = document.getElementById("lang-text");
       const footerLang = document.getElementById("footer-lang");
+      const summaryLang = document.getElementById("summary-lang");
       if (langText) langText.textContent = window.currentLang.toUpperCase();
       if (footerLang) footerLang.textContent = window.currentLang.toUpperCase();
+      if (summaryLang) summaryLang.textContent = window.currentLang.toUpperCase();
 
       // Translate UI
       translateUI();
@@ -588,6 +843,11 @@ window.registerEventListeners = function () {
       }
       if (typeof reloadMacroAnalysis === "function") {
         reloadMacroAnalysis();
+      }
+      
+      // Reload AI summary if a stock is selected
+      if (window.currentChartPick && typeof loadUSAISummary === "function") {
+        loadUSAISummary(window.currentChartPick.ticker);
       }
     });
   }
@@ -621,6 +881,101 @@ window.registerEventListeners = function () {
       const indicator = this.getAttribute("data-indicator");
       if (indicator && typeof toggleIndicator === "function") {
         toggleIndicator(indicator);
+      }
+    });
+  });
+
+  // AI Summary language toggle
+  const summaryLangToggle = document.getElementById("summary-lang-toggle");
+  if (summaryLangToggle) {
+    summaryLangToggle.addEventListener("click", function () {
+      window.currentLang = window.currentLang === "ko" ? "en" : "ko";
+      saveState();
+
+      // Update UI
+      const summaryLang = document.getElementById("summary-lang");
+      const langText = document.getElementById("lang-text");
+      const footerLang = document.getElementById("footer-lang");
+      if (summaryLang) summaryLang.textContent = window.currentLang.toUpperCase();
+      if (langText) langText.textContent = window.currentLang.toUpperCase();
+      if (footerLang) footerLang.textContent = window.currentLang.toUpperCase();
+
+      // Translate UI
+      translateUI();
+
+      // Reload AI summary if a stock is selected
+      if (window.currentChartPick && typeof loadUSAISummary === "function") {
+        loadUSAISummary(window.currentChartPick.ticker);
+      }
+
+      // Reload data with new language
+      if (typeof updateUSMarketDashboard === "function") {
+        updateUSMarketDashboard();
+      }
+      if (typeof reloadMacroAnalysis === "function") {
+        reloadMacroAnalysis();
+      }
+    });
+  }
+
+  // Navigation link clicks
+  document.querySelectorAll(".nav-link").forEach((link) => {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      const href = this.getAttribute("href");
+      if (href && href.startsWith("#")) {
+        // Remove active class from all nav links
+        document.querySelectorAll(".nav-link").forEach((l) => {
+          l.classList.remove("active");
+        });
+        // Add active class to clicked link
+        this.classList.add("active");
+        
+        // Scroll to section if needed
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          // Find the scrollable container (main content area)
+          const scrollContainer = document.querySelector("main .flex-1.overflow-y-auto");
+          
+          if (scrollContainer) {
+            // Get the position of the target element relative to the scroll container
+            const containerRect = scrollContainer.getBoundingClientRect();
+            const targetRect = targetElement.getBoundingClientRect();
+            
+            // Calculate the scroll position within the container
+            const scrollTop = scrollContainer.scrollTop;
+            const targetTop = targetRect.top - containerRect.top + scrollTop;
+            
+            // Scroll the container smoothly
+            scrollContainer.scrollTo({
+              top: targetTop - 20, // 20px offset for better visibility
+              behavior: "smooth"
+            });
+          } else {
+            // Fallback to window scroll if container not found
+            const headerOffset = 56;
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: "smooth"
+            });
+          }
+          
+          // Also open accordion if it's an accordion section
+          if (targetId === "macro" || targetId === "etf-flows" || targetId === "calendar") {
+            const accordionContent = targetElement.querySelector(".accordion-content");
+            if (accordionContent && !accordionContent.classList.contains("open")) {
+              accordionContent.classList.add("open");
+              const icon = targetElement.querySelector(".accordion-header i");
+              if (icon) icon.classList.add("rotate-180");
+            }
+          }
+        } else {
+          console.warn(`Section with id "${targetId}" not found`);
+        }
       }
     });
   });
@@ -715,6 +1070,105 @@ window.cleanupApp = function () {
   }
 
   console.log("🧹 Application cleaned up");
+};
+
+// ============================================
+// Tab Switching Functions
+// ============================================
+
+/**
+ * Switch between tabs (Market, Analysis, Sectors, Calendar)
+ * @param {string} tabName - Name of the tab to switch to
+ */
+window.switchTab = function (tabName) {
+  console.log(`🔄 Switching to tab: ${tabName}`);
+  
+  // Hide all tab content sections
+  const allSections = document.querySelectorAll('[data-tab-content]');
+  allSections.forEach(section => {
+    section.style.display = 'none';
+  });
+  
+  // Show the selected tab's content
+  const targetSection = document.querySelector(`[data-tab-content="${tabName}"]`);
+  if (targetSection) {
+    targetSection.style.display = 'block';
+    
+    // Scroll to top of content area
+    const scrollContainer = document.querySelector("main .flex-1.overflow-y-auto");
+    if (scrollContainer) {
+      scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // Load data for specific tabs if needed
+    if (tabName === 'sectors') {
+      if (typeof loadSectorHeatmap === "function") {
+        loadSectorHeatmap();
+      }
+    } else if (tabName === 'calendar') {
+      // Load calendar data if not already loaded
+      const calendarContent = document.getElementById('calendar-tab-content');
+      if (calendarContent && (!calendarContent.innerHTML || calendarContent.innerHTML.trim() === '')) {
+        // Calendar data should be loaded on init, but reload if empty
+        if (typeof updateUSMarketDashboard === "function") {
+          // Calendar is part of main dashboard, but we can reload it
+        }
+      }
+    } else if (tabName === 'analysis') {
+      // Analysis tab: show technical analysis, AI insights, etc.
+      // Content is already in HTML
+    }
+  } else {
+    console.warn(`Tab content section not found for: ${tabName}`);
+  }
+};
+
+/**
+ * Load Sector Heatmap
+ */
+window.loadSectorHeatmap = async function () {
+  try {
+    const data = await fetchAPI("/api/us/sector-heatmap");
+    if (data && typeof renderUSSectorHeatmap === "function") {
+      renderUSSectorHeatmap(data);
+    }
+  } catch (error) {
+    logError("Sector heatmap", error);
+  }
+};
+
+// ============================================
+// Options Flow & Risk Analysis Functions
+// ============================================
+
+/**
+ * Load Options Flow Data
+ */
+window.loadOptionsFlow = async function () {
+  try {
+    const data = await fetchAPI("/api/us/options-flow");
+    if (data && typeof renderUSOptionsFlow === "function") {
+      renderUSOptionsFlow(data);
+    }
+  } catch (error) {
+    logError("Options flow", error);
+    // Don't show toast, just log
+  }
+};
+
+/**
+ * Load Risk Analysis Data
+ */
+window.loadRiskAnalysis = async function () {
+  try {
+    const data = await fetchAPI("/api/us/portfolio-risk");
+    if (data && typeof renderUSRiskAnalysis === "function") {
+      renderUSRiskAnalysis(data);
+    }
+  } catch (error) {
+    logError("Risk analysis", error);
+    // Don't show toast, just log
+  }
 };
 
 // ============================================
@@ -1064,8 +1518,22 @@ window.loadUSStockChart = async function (pick, idx, period) {
 
     // Set candle data
     if (response.candles && response.candles.length > 0) {
-      candleSeries.setData(response.candles);
+      // Ensure timestamps are in correct format (seconds since epoch)
+      const formattedCandles = response.candles.map(candle => ({
+        time: candle.time,
+        open: candle.open,
+        high: candle.high,
+        low: candle.low,
+        close: candle.close,
+        volume: candle.volume
+      }));
+      
+      candleSeries.setData(formattedCandles);
       window.usStockChart.timeScale().fitContent();
+      
+      console.log(`✅ Set ${formattedCandles.length} candles to chart`);
+    } else {
+      console.warn('No candle data received');
     }
 
     // Store current chart pick

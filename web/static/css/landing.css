@@ -1,0 +1,115 @@
+/* ============================================
+   Landing Page Specific Styles
+   ============================================ */
+
+.landing-page {
+    background: linear-gradient(180deg, #121212 0%, #1a1a1a 100%);
+    min-height: 100vh;
+}
+
+/* Hero Section */
+.hero-section {
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(0, 143, 251, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(119, 93, 208, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(0, 227, 150, 0.05) 0%, transparent 50%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(45deg, transparent 48%, rgba(0, 143, 251, 0.03) 49%, rgba(0, 143, 251, 0.03) 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, rgba(119, 93, 208, 0.03) 49%, rgba(119, 93, 208, 0.03) 51%, transparent 52%);
+    background-size: 60px 60px;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Navigation */
+nav.scrolled {
+    background-color: rgba(26, 26, 26, 0.98);
+    backdrop-filter: blur(10px);
+}
+
+/* Feature Cards Hover Effect */
+.bg-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Gradient Text */
+.bg-gradient-to-r {
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Section Spacing */
+section {
+    scroll-margin-top: 80px;
+}
+
+/* CTA Button Animation */
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(0, 143, 251, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(0, 143, 251, 0.5);
+    }
+}
+
+.bg-accent-blue:hover {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+        line-height: 1.2;
+    }
+    
+    .hero-section p {
+        font-size: 1.125rem;
+    }
+}
+
+/* Timeline Line Animation */
+@keyframes draw-line {
+    from {
+        height: 0;
+    }
+    to {
+        height: 100%;
+    }
+}
+
+/* Feature Icons */
+.feature-icon {
+    transition: transform 0.3s ease;
+}
+
+.group:hover .feature-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+

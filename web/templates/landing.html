@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="US Market Smart Money Alpha Platform - AI-powered stock analysis and investment insights">
+    <meta name="keywords" content="stock analysis, smart money, AI investment, US market, alpha platform">
+    <title>US Market Smart Money Alpha Platform</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/globals.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+</head>
+<body class="landing-page">
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-b border-card">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-accent-blue to-accent-purple rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-white">US Market Alpha</h1>
+                        <p class="text-xs text-gray-500">Smart Money Platform</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="#features" class="text-gray-400 hover:text-white transition-colors text-sm hidden md:block">기능</a>
+                    <a href="#how-it-works" class="text-gray-400 hover:text-white transition-colors text-sm hidden md:block">작동 방식</a>
+                    <a href="/dashboard" class="bg-accent-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                        <span>대시보드 시작</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section pt-32 pb-20 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="inline-block mb-6 px-4 py-2 bg-accent-blue/20 border border-accent-blue/30 rounded-full">
+                <span class="text-accent-blue text-sm font-medium">
+                    <i class="fas fa-robot mr-2"></i>
+                    AI 기반 투자 인텔리전스
+                </span>
+            </div>
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+                기관은 발자국을 남깁니다.<br>
+                <span class="bg-gradient-to-r from-accent-blue via-accent-purple to-accent-green bg-clip-text text-transparent">
+                    AI가 그것을 찾아냅니다.
+                </span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+                30년 경력의 월스트리트 분석 노하우와 최신 생성형 AI 기술을 결합하여,<br>
+                기관 투자자의 자금 흐름을 추적하고 최적의 매매 타이밍을 포착합니다.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="/dashboard" class="bg-accent-blue hover:bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all transform hover:scale-105 shadow-lg shadow-accent-blue/30 flex items-center gap-3">
+                    <i class="fas fa-chart-line"></i>
+                    <span>대시보드 시작하기</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#features" class="bg-secondary hover:bg-tertiary text-white border border-card px-8 py-4 rounded-lg text-lg font-semibold transition-all flex items-center gap-3">
+                    <i class="fas fa-info-circle"></i>
+                    <span>더 알아보기</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Statement Section -->
+    <section id="problem" class="py-20 px-4 bg-secondary/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">시장의 현실</h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    개인 투자자는 정보의 질과 속도, 분석 도구의 부족으로 인해 구조적으로 불리한 위치에 있습니다.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-card border border-card rounded-xl p-8 hover:border-accent-blue transition-all">
+                    <div class="w-16 h-16 bg-accent-red/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-puzzle-piece text-accent-red text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">데이터의 파편화</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        SEC 공시(13F), 옵션 흐름, 온체인 데이터, 뉴스 등이 모두 흩어져 있어 개인 통합 분석이 불가능합니다.
+                    </p>
+                </div>
+                <div class="bg-card border border-card rounded-xl p-8 hover:border-accent-blue transition-all">
+                    <div class="w-16 h-16 bg-accent-yellow/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-dollar-sign text-accent-yellow text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">비용 장벽</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Bloomberg Terminal($24k/yr)이나 Institutional Research 리포트는 개인이 접근하기에 너무 비쌉니다.
+                    </p>
+                </div>
+                <div class="bg-card border border-card rounded-xl p-8 hover:border-accent-blue transition-all">
+                    <div class="w-16 h-16 bg-accent-purple/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-bar text-accent-purple text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">분석의 한계</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        퀀트 데이터(숫자)만으로는 맥락을 이해하기 어렵고, 뉴스만으로는 타이밍을 잡기 어렵습니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solution" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">우리의 해결책</h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+                    "AI로 기관급 분석을 모두에게"
+                </p>
+                <div class="inline-block px-6 py-3 bg-gradient-to-r from-accent-blue/20 to-accent-purple/20 border border-accent-blue/30 rounded-full">
+                    <span class="text-accent-blue font-semibold">고가의 유료 데이터 없이, 공개 데이터와 AI 분석을 통해 기관 수준의 인사이트를 제공합니다</span>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gradient-to-br from-card to-secondary border border-accent-blue/30 rounded-xl p-8 hover:shadow-lg hover:shadow-accent-blue/20 transition-all">
+                    <div class="w-16 h-16 bg-accent-blue/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-brain text-accent-blue text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">하이브리드 인텔리전스</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        정량적 데이터(6가지 팩터 퀀트 분석)와 정성적 분석(생성형 AI)을 결합하여 완벽한 투자 인사이트를 제공합니다.
+                    </p>
+                </div>
+                <div class="bg-gradient-to-br from-card to-secondary border border-accent-green/30 rounded-xl p-8 hover:shadow-lg hover:shadow-accent-green/20 transition-all">
+                    <div class="w-16 h-16 bg-accent-green/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-search-dollar text-accent-green text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">스마트 머니 추적</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        기관의 매집 흔적(다크풀, 13F 공시, 내부자 거래)을 시각화하여 "큰손과 함께 매매"할 수 있도록 지원합니다.
+                    </p>
+                </div>
+                <div class="bg-gradient-to-br from-card to-secondary border border-accent-purple/30 rounded-xl p-8 hover:shadow-lg hover:shadow-accent-purple/20 transition-all">
+                    <div class="w-16 h-16 bg-accent-purple/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-wallet text-accent-purple text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">비용 효율성</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        블룸버그 터미널 수준의 분석을 합리적인 가격으로 제공하여 모든 투자자가 접근할 수 있도록 합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 bg-secondary/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">핵심 기능</h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    기관 투자자 수준의 분석 도구를 개인 투자자에게 제공합니다.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1: Smart Money Radar -->
+                <div class="bg-card border border-card rounded-xl p-6 hover:border-accent-blue transition-all group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-accent-blue/20 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-accent-blue/30 transition-colors">
+                            <i class="fas fa-radar text-accent-blue text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-white mb-2">스마트 머니 레이더</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                OBV, MFI, 13F 보유량, 다크풀 지수를 융합하여 '매집'과 '분산' 단계를 정확히 식별합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2: 6-Factor Scoring -->
+                <div class="bg-card border border-card rounded-xl p-6 hover:border-accent-green transition-all group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-accent-green/20 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-accent-green/30 transition-colors">
+                            <i class="fas fa-calculator text-accent-green text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-white mb-2">6가지 팩터 스코어링 모델</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                수급, 기관, 기술적, 펀더멘털, 애널리스트, 상대강도를 가중 평균하여 최고 등급 종목을 자동으로 선별합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3: AI Analysis -->
+                <div class="bg-card border border-card rounded-xl p-6 hover:border-accent-purple transition-all group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-accent-purple/20 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-accent-purple/30 transition-colors">
+                            <i class="fas fa-robot text-accent-purple text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-white mb-2">AI 기반 분석</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Gemini 3.0 Pro가 실시간 매크로 지표를 분석하여 '시장 상황'을 예측하고 즉시 실행 가능한 인사이트를 제공합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 4: Institutional Tracking -->
+                <div class="bg-card border border-card rounded-xl p-6 hover:border-accent-blue transition-all group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-accent-blue/20 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-accent-blue/30 transition-colors">
+                            <i class="fas fa-building text-accent-blue text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-white mb-2">기관 투자 추적</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                13F 분기 보고서와 일별 거래량 패턴을 결합하여, 보고서 발표 전 '선행 매수' 패턴을 정확히 탐지합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 5: Options Flow -->
+                <div class="bg-card border border-card rounded-xl p-6 hover:border-accent-yellow transition-all group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-accent-yellow/20 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-accent-yellow/30 transition-colors">
+                            <i class="fas fa-exchange-alt text-accent-yellow text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-white mb-2">옵션 흐름 분석</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                비정상적인 콜/풋 거래량 비율(PCR) 및 실현가치 외 옵션 대량 베팅을 감지하여 시장 조성자의 델타 헤징 방향을 예측합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 6: Real-time Dashboard -->
+                <div class="bg-card border border-card rounded-xl p-6 hover:border-accent-green transition-all group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-accent-green/20 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-accent-green/30 transition-colors">
+                            <i class="fas fa-chart-line text-accent-green text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-white mb-2">실시간 대시보드</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                트레이딩뷰 스타일의 경량 차트와 실시간 섹터 히트맵으로 시장 상황을 한눈에 파악할 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">작동 방식</h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    데이터 수집부터 AI 분석까지, 전 과정이 자동화되어 있습니다.
+                </p>
+            </div>
+            <div class="relative">
+                <!-- Timeline -->
+                <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-accent-blue via-accent-purple to-accent-green"></div>
+                
+                <div class="space-y-12">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/2 md:text-right">
+                            <div class="bg-card border border-accent-blue/30 rounded-xl p-6 hover:shadow-lg hover:shadow-accent-blue/20 transition-all">
+                                <div class="inline-flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 bg-accent-blue/20 rounded-full flex items-center justify-center">
+                                        <span class="text-accent-blue font-bold text-lg">1</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white">데이터 수집</h3>
+                                </div>
+                                <p class="text-gray-400 leading-relaxed">
+                                    SEC 13F 공시, 옵션 시장 데이터, 거래량 패턴, 매크로 지표 등 흩어져 있는 고급 데이터를 ETL 파이프라인으로 통합합니다.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="hidden md:block w-12 h-12 bg-accent-blue rounded-full flex items-center justify-center z-10">
+                            <i class="fas fa-database text-white"></i>
+                        </div>
+                        <div class="w-full md:w-1/2"></div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/2"></div>
+                        <div class="hidden md:block w-12 h-12 bg-accent-purple rounded-full flex items-center justify-center z-10">
+                            <i class="fas fa-chart-bar text-white"></i>
+                        </div>
+                        <div class="w-full md:w-1/2 md:text-left">
+                            <div class="bg-card border border-accent-purple/30 rounded-xl p-6 hover:shadow-lg hover:shadow-accent-purple/20 transition-all">
+                                <div class="inline-flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 bg-accent-purple/20 rounded-full flex items-center justify-center">
+                                        <span class="text-accent-purple font-bold text-lg">2</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white">6가지 팩터 스코어링</h3>
+                                </div>
+                                <p class="text-gray-400 leading-relaxed">
+                                    수급, 기관, 기술적, 펀더멘털, 애널리스트, 상대강도 6가지 팩터를 가중 평균하여 각 종목에 0~100점의 종합 점수를 산출합니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/2 md:text-right">
+                            <div class="bg-card border border-accent-green/30 rounded-xl p-6 hover:shadow-lg hover:shadow-accent-green/20 transition-all">
+                                <div class="inline-flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 bg-accent-green/20 rounded-full flex items-center justify-center">
+                                        <span class="text-accent-green font-bold text-lg">3</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white">AI 분석</h3>
+                                </div>
+                                <p class="text-gray-400 leading-relaxed">
+                                    Gemini 3.0 Pro가 정량적 점수의 이유를 설명하고, 뉴스 헤드라인과 재무제표를 결합하여 "왜 지금 투자해야 하는가?"에 대한 명확한 분석을 제공합니다.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="hidden md:block w-12 h-12 bg-accent-green rounded-full flex items-center justify-center z-10">
+                            <i class="fas fa-robot text-white"></i>
+                        </div>
+                        <div class="w-full md:w-1/2"></div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/2"></div>
+                        <div class="hidden md:block w-12 h-12 bg-accent-blue rounded-full flex items-center justify-center z-10">
+                            <i class="fas fa-chart-line text-white"></i>
+                        </div>
+                        <div class="w-full md:w-1/2 md:text-left">
+                            <div class="bg-card border border-accent-blue/30 rounded-xl p-6 hover:shadow-lg hover:shadow-accent-blue/20 transition-all">
+                                <div class="inline-flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 bg-accent-blue/20 rounded-full flex items-center justify-center">
+                                        <span class="text-accent-blue font-bold text-lg">4</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white">대시보드 시각화</h3>
+                                </div>
+                                <p class="text-gray-400 leading-relaxed">
+                                    실시간 차트, 섹터 히트맵, 상위 10개 추천 종목 테이블 등으로 직관적인 시각화를 제공하여 즉시 실행 가능한 인사이트를 제공합니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-4 bg-gradient-to-br from-accent-blue/10 via-accent-purple/10 to-accent-green/10">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                지금 바로 시작하세요
+            </h2>
+            <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+                기관 투자자 수준의 분석 도구로 더 나은 투자 결정을 내리세요.
+            </p>
+            <a href="/dashboard" class="inline-flex items-center gap-3 bg-gradient-to-r from-accent-blue to-accent-purple hover:from-blue-600 hover:to-purple-600 text-white px-10 py-5 rounded-lg text-lg font-semibold transition-all transform hover:scale-105 shadow-lg shadow-accent-blue/30">
+                <i class="fas fa-rocket"></i>
+                <span>대시보드 시작하기</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-card border-t border-card py-12 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-accent-blue to-accent-purple rounded-lg flex items-center justify-center">
+                            <i class="fas fa-chart-line text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold">US Market Alpha</h3>
+                            <p class="text-xs text-gray-500">Smart Money Platform</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-400">
+                        "Institutions leave footprints. AI finds them."
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">기능</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#features" class="hover:text-white transition-colors">스마트 머니 추적</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">6가지 팩터 스코어링</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">AI 분석</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">실시간 대시보드</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">정보</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#how-it-works" class="hover:text-white transition-colors">작동 방식</a></li>
+                        <li><a href="#problem" class="hover:text-white transition-colors">문제 해결</a></li>
+                        <li><a href="#solution" class="hover:text-white transition-colors">솔루션</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">연결</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="/dashboard" class="hover:text-white transition-colors">대시보드</a></li>
+                        <li class="text-gray-500">데이터 출처: Yahoo Finance, SEC</li>
+                        <li class="text-gray-500">AI 모델: Gemini 3.0 Pro</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-card pt-8 text-center">
+                <p class="text-sm text-gray-500">
+                    ⚠️ 본 소프트웨어는 투자 판단을 보조하기 위한 도구이며, 최종 투자 결정에 대한 책임은 사용자에게 있습니다.
+                </p>
+                <p class="text-sm text-gray-500 mt-2">
+                    Copyright © 2025 US Market Alpha Team. All Rights Reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Smooth Scroll Script -->
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
+

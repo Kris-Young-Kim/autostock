@@ -75,6 +75,14 @@ window.renderUSSmartMoneyPicks = function(data) {
         const change = pick.change_since_rec || 0;
         const sector = pick.sector || 'Unknown';
         
+        // Translate name and sector to Korean if needed
+        const translatedName = typeof translateStockName === 'function' 
+            ? translateStockName(name, ticker) 
+            : name;
+        const translatedSector = typeof translateSector === 'function' 
+            ? translateSector(sector) 
+            : sector;
+        
         const changeClass = getColorClass(change);
         const changeIcon = change >= 0 ? '▲' : '▼';
         
@@ -92,7 +100,7 @@ window.renderUSSmartMoneyPicks = function(data) {
         row.innerHTML = `
             <td class="font-medium">${rank}</td>
             <td class="font-mono font-bold text-accent-blue">${ticker}</td>
-            <td class="text-white">${name}</td>
+            <td class="text-white">${translatedName}</td>
             <td class="text-right ${scoreClass}">${score.toFixed(1)}</td>
             <td class="text-right price-cell text-white">${formatNumber(price)}</td>
             <td class="text-right change-cell ${changeClass}">
@@ -100,7 +108,7 @@ window.renderUSSmartMoneyPicks = function(data) {
                 <span>${formatPercent(change)}</span>
             </td>
             <td class="text-center">
-                <span class="px-2 py-1 rounded text-xs bg-tertiary">${sector}</span>
+                <span class="px-2 py-1 rounded text-xs bg-tertiary">${translatedSector}</span>
             </td>
         `;
         
@@ -280,6 +288,236 @@ window.renderUSETFFlows = function(data) {
     container.innerHTML = html || '<div class="text-sm text-gray-500">No ETF flow data available</div>';
     
     console.log('✅ Rendered ETF flows');
+};
+
+// ============================================
+// Options Flow Rendering
+// ============================================
+
+/**
+ * Render Options Flow
+ * @param {Object} data - Options flow data from API
+ */
+window.renderUSOptionsFlow = function(data) {
+    const container = document.getElementById('options-flow-content');
+    if (!container) {
+        console.warn('Options flow container not found');
+        return;
+    }
+    
+    if (!data || !data.options_flow || data.options_flow.length === 0) {
+        container.innerHTML = '<div class="text-center py-12"><i class="fas fa-chart-bar text-6xl text-gray-600 mb-4"></i><p class="text-gray-400 text-sm mb-2" data-i18n="optionsFlowComingSoon">옵션 흐름 데이터가 없습니다</p></div>';
+        return;
+    }
+    
+    let html = '';
+    
+    // Summary stats
+    if (data.total_tickers) {
+        html += `
+            <div class="mb-4 p-3 bg-tertiary rounded">
+                <div class="text-xs text-gray-400 mb-1">분석 종목 수</div>
+                <div class="text-2xl font-bold text-white">${data.total_tickers}</div>
+            </div>
+        `;
+    }
+    
+    // Options flow table
+    html += '<div class="overflow-x-auto"><table class="w-full text-sm">';
+    html += '<thead><tr class="border-b border-card text-gray-400">';
+    html += '<th class="py-3 text-left" data-i18n="ticker">티커</th>';
+    html += '<th class="py-3 text-left">만료일</th>';
+    html += '<th class="py-3 text-right">P/C 비율</th>';
+    html += '<th class="py-3 text-right">콜 볼륨</th>';
+    html += '<th class="py-3 text-right">풋 볼륨</th>';
+    html += '<th class="py-3 text-right">비정상 거래</th>';
+    html += '<th class="py-3 text-center">센티먼트</th>';
+    html += '</tr></thead><tbody class="divide-y divide-card">';
+    
+    data.options_flow.slice(0, 10).forEach(item => {
+        const ticker = item.ticker || 'N/A';
+        const expiration = item.expiration || 'N/A';
+        const metrics = item.metrics || {};
+        const unusual = item.unusual || {};
+        const sentiment = item.sentiment || 'Neutral';
+        
+        const pcRatio = metrics.pc_ratio || 0;
+        const callVol = metrics.call_vol || 0;
+        const putVol = metrics.put_vol || 0;
+        const unusualTotal = unusual.total || 0;
+        
+        const sentimentClass = sentiment.includes('Bullish') ? 'text-green' : 
+                              sentiment.includes('Bearish') ? 'text-red' : 'text-gray-400';
+        
+        const translatedTicker = typeof translateStockName === 'function' 
+            ? translateStockName(ticker, ticker) 
+            : ticker;
+        
+        html += `
+            <tr class="hover:bg-tertiary">
+                <td class="font-mono font-bold text-accent-blue">${ticker}</td>
+                <td class="text-gray-300">${expiration}</td>
+                <td class="text-right text-gray-300">${pcRatio.toFixed(3)}</td>
+                <td class="text-right text-green">${formatNumber(callVol)}</td>
+                <td class="text-right text-red">${formatNumber(putVol)}</td>
+                <td class="text-right ${unusualTotal > 10 ? 'text-yellow font-bold' : 'text-gray-300'}">${unusualTotal}</td>
+                <td class="text-center ${sentimentClass}">${sentiment}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table></div>';
+    
+    container.innerHTML = html;
+    console.log('✅ Rendered options flow');
+};
+
+// ============================================
+// Risk Analysis Rendering
+// ============================================
+
+/**
+ * Render Risk Analysis
+ * @param {Object} data - Portfolio risk data from API
+ */
+window.renderUSRiskAnalysis = function(data) {
+    const container = document.getElementById('risk-analysis-content');
+    if (!container) {
+        console.warn('Risk analysis container not found');
+        return;
+    }
+    
+    if (!data || !data.metrics) {
+        container.innerHTML = '<div class="text-center py-12"><i class="fas fa-shield-alt text-6xl text-gray-600 mb-4"></i><p class="text-gray-400 text-sm mb-2" data-i18n="riskComingSoon">리스크 분석 데이터가 없습니다</p></div>';
+        return;
+    }
+    
+    let html = '';
+    const metrics = data.metrics || {};
+    
+    // Key metrics grid
+    html += '<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">';
+    
+    // Portfolio Volatility
+    const volatility = metrics.portfolio_volatility_pct || 0;
+    const volatilityClass = volatility < 15 ? 'text-green' : volatility < 25 ? 'text-yellow' : 'text-red';
+    html += `
+        <div class="bg-tertiary rounded p-4">
+            <div class="text-xs text-gray-400 mb-1">포트폴리오 변동성</div>
+            <div class="text-2xl font-bold ${volatilityClass}">${volatility.toFixed(2)}%</div>
+        </div>
+    `;
+    
+    // Beta
+    const beta = metrics.beta || 0;
+    const betaClass = beta < 0.8 ? 'text-green' : beta > 1.2 ? 'text-red' : 'text-yellow';
+    html += `
+        <div class="bg-tertiary rounded p-4">
+            <div class="text-xs text-gray-400 mb-1">베타</div>
+            <div class="text-2xl font-bold ${betaClass}">${beta.toFixed(2)}</div>
+        </div>
+    `;
+    
+    // Diversification Ratio
+    const divRatio = metrics.diversification_ratio || 0;
+    const divClass = divRatio > 2 ? 'text-green' : divRatio > 1.5 ? 'text-yellow' : 'text-red';
+    html += `
+        <div class="bg-tertiary rounded p-4">
+            <div class="text-xs text-gray-400 mb-1">다각화 비율</div>
+            <div class="text-2xl font-bold ${divClass}">${divRatio.toFixed(2)}</div>
+        </div>
+    `;
+    
+    // Risk Level
+    const riskLevel = metrics.risk_level || 'Unknown';
+    const riskClass = riskLevel === 'Low' ? 'text-green' : riskLevel === 'Medium' ? 'text-yellow' : 'text-red';
+    html += `
+        <div class="bg-tertiary rounded p-4">
+            <div class="text-xs text-gray-400 mb-1">리스크 수준</div>
+            <div class="text-2xl font-bold ${riskClass}">${riskLevel}</div>
+        </div>
+    `;
+    
+    html += '</div>';
+    
+    // Individual volatilities table
+    if (data.individual_volatilities && Object.keys(data.individual_volatilities).length > 0) {
+        html += '<div class="mb-4"><h3 class="text-sm font-bold text-white mb-2">개별 종목 변동성</h3>';
+        html += '<div class="overflow-x-auto"><table class="w-full text-sm">';
+        html += '<thead><tr class="border-b border-card text-gray-400">';
+        html += '<th class="py-2 text-left" data-i18n="ticker">티커</th>';
+        html += '<th class="py-2 text-right">변동성 (%)</th>';
+        html += '</tr></thead><tbody class="divide-y divide-card">';
+        
+        const volatilities = Object.entries(data.individual_volatilities)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10);
+        
+        volatilities.forEach(([ticker, vol]) => {
+            const volClass = vol < 20 ? 'text-green' : vol < 35 ? 'text-yellow' : 'text-red';
+            const translatedTicker = typeof translateStockName === 'function' 
+                ? translateStockName(ticker, ticker) 
+                : ticker;
+            
+            html += `
+                <tr class="hover:bg-tertiary">
+                    <td class="font-mono font-bold text-accent-blue">${ticker}</td>
+                    <td class="text-right ${volClass}">${vol.toFixed(2)}%</td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table></div></div>';
+    }
+    
+    container.innerHTML = html;
+    console.log('✅ Rendered risk analysis');
+};
+
+// ============================================
+// Sector Heatmap Rendering
+// ============================================
+
+/**
+ * Render Sector Heatmap
+ * @param {Object} data - Sector heatmap data from API
+ */
+window.renderUSSectorHeatmap = function(data) {
+    const container = document.getElementById('sector-heatmap-content');
+    if (!container) {
+        console.warn('Sector heatmap container not found');
+        return;
+    }
+    
+    if (!data || !data.sectors || data.sectors.length === 0) {
+        container.innerHTML = '<div class="text-center py-12"><i class="fas fa-chart-pie text-6xl text-gray-600 mb-4"></i><p class="text-gray-400 text-sm mb-2">섹터 데이터가 없습니다</p></div>';
+        return;
+    }
+    
+    let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
+    
+    data.sectors.forEach(sector => {
+        const ticker = sector.ticker || 'N/A';
+        const name = sector.name || 'N/A';
+        const change = sector.change_pct || sector.change || 0;
+        const changeClass = getColorClass(change);
+        const changeIcon = change >= 0 ? '▲' : '▼';
+        
+        html += `
+            <div class="bg-tertiary rounded p-4 hover:border-accent-blue border border-card transition-colors">
+                <div class="text-xs text-gray-400 mb-1">${ticker}</div>
+                <div class="text-sm font-bold text-white mb-1">${name}</div>
+                <div class="text-sm ${changeClass} flex items-center gap-1">
+                    <span>${changeIcon}</span>
+                    <span>${formatPercent(change)}</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+    console.log('✅ Rendered sector heatmap');
 };
 
 // ============================================
